@@ -1,0 +1,586 @@
+/* Marco Mascolo — personal site
+   crystal white. crystal black. Palatino. glitch pixels in the margins. */
+
+:root {
+  --bg:     #ffffff;
+  --text:   #111111;
+  --muted:  #666666;
+  --rule:   #e6e6e6;
+  --orange: #ff3a1f;
+  --link:   #666666;
+  --column: 800px;
+  --serif:  'Palatino', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+  --mono:   'Inconsolata', 'SF Mono', Menlo, Consolas, monospace;
+  /* Single active banner. Cycling across banner-{1,3,4,5}.webp is disabled —
+     those files live in /assets/_unused/banners/. To re-enable, move them back here
+     AND uncomment the IIFE inside the <head> <script> of every HTML page. */
+  --banner-url: url(/assets/banner-2.webp);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* full-width banner — bg-image driven by --banner-url CSS variable */
+.banner {
+  width: 100%;
+  display: block;
+  margin: 0;
+  height: 200px;
+  background-color: #000;
+  background-image: var(--banner-url);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+@media (max-width: 700px) { .banner { height: 120px; } }
+
+/* page container */
+main {
+  flex: 1;
+  width: 100%;
+  max-width: var(--column);
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+  position: relative;
+  z-index: 1;
+  background: var(--bg);
+}
+
+/* header block (profile + name + nav) */
+header.intro {
+  margin: 0 0 2rem;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: block;
+  margin: 0 0 1.25rem;
+  object-fit: cover;
+}
+
+h1.name {
+  font-size: 2.6rem;
+  font-weight: bold;
+  margin: 0 0 0.75rem;
+  line-height: 1.05;
+  color: black;
+  letter-spacing: -0.01em;
+}
+
+nav.top {
+  margin: 0;
+  font-size: 1rem;
+}
+nav.top a {
+  color: var(--link);
+  text-decoration: none;
+  margin-right: 1.5rem;
+}
+nav.top a:hover { color: black; }
+nav.top a[aria-current="page"] { color: black; }
+
+hr.divider {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 1.5rem 0 1.75rem;
+}
+
+/* body text */
+h1, h2, h3 {
+  font-weight: bold;
+  color: black;
+}
+
+h2 {
+  font-size: 1.4rem;
+  margin: 2.25rem 0 0.5rem;
+}
+
+h3 {
+  font-size: 1.1rem;
+  margin: 1.5rem 0 0.5rem;
+}
+
+p { margin: 0 0 1.1rem; }
+
+a {
+  color: var(--link);
+  text-decoration: none;
+}
+a:hover { color: black; text-decoration: underline; }
+
+ol, ul { padding-left: 1.5rem; margin: 0 0 1.25rem; }
+li { margin-bottom: 0.4rem; }
+
+dl { margin: 0 0 1rem; }
+dt { font-weight: bold; color: black; margin-top: 0.75rem; }
+dt:first-child { margin-top: 0; }
+dd { margin: 0.2rem 0 0 0; }
+
+code, pre { font-family: var(--mono); font-size: 0.92em; }
+pre { background: #ffffff; padding: 0.8rem 1rem; overflow-x: auto; border-left: 2px solid var(--rule); margin: 1.25rem 0; }
+
+/* the Alabama quote — centered italic orange */
+.quote {
+  margin: 3rem 0 0.5rem;
+  text-align: center;
+  font-style: italic;
+  color: var(--orange);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+.quote::before, .quote::after {
+  content: '"';
+  display: block;
+  color: var(--orange);
+  font-size: 1.4rem;
+}
+.quote::before { margin-bottom: 0.4rem; }
+.quote::after  { margin-top: 0.4rem; }
+
+.quote-source {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 1.5rem 0 0;
+}
+
+.quote-spotify {
+  text-align: center;
+  font-size: 0.85rem;
+  margin: 0.4rem 0 0;
+  opacity: 0.75;
+}
+
+/* a centered, slightly larger pullquote — used on /me and /manifesto */
+.pullquote {
+  text-align: center;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  margin: 2rem auto;
+  max-width: 36rem;
+}
+
+/* ───────── SITE FOOTER (every page) ───────── */
+.site-footer {
+  width: 100%;
+  max-width: var(--column);
+  margin: 5rem auto 0;
+  padding: 1.75rem 1.5rem 2.5rem;
+  border-top: 1px solid var(--rule);
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.85;
+}
+.site-footer p { margin: 0; }
+.site-footer .site-footer-links { margin-bottom: 0.5rem; }
+.site-footer a { color: var(--muted); text-decoration: none; }
+.site-footer a:hover { color: black; text-decoration: underline; }
+.site-footer .site-footer-meta {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-top: 0.6rem;
+}
+.site-footer .sep { margin: 0 0.4ch; opacity: 0.5; }
+
+/* ───────── BELIEFS / HP entries ───────── */
+
+.hp-legend {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.hp-legend code {
+  color: black;
+  background: #ffffff;
+  padding: 0.05rem 0.35rem;
+}
+
+.hp {
+  margin: 1.5rem 0;
+  border-top: 1px solid var(--rule);
+  padding-top: 1.1rem;
+}
+
+.hp summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+  outline: none;
+}
+.hp summary::-webkit-details-marker { display: none; }
+.hp summary::before {
+  content: '+';
+  display: inline-block;
+  width: 1ch;
+  font-family: var(--mono);
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.hp[open] summary::before { content: '−'; }
+
+.hp-id {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.hp-claim {
+  font-weight: bold;
+  color: black;
+  line-height: 1.4;
+}
+
+.hp-body {
+  margin: 1rem 0 0 calc(1ch + 1rem);
+  padding-left: 1rem;
+  border-left: 2px solid var(--rule);
+}
+
+.hp-body h3 {
+  font-size: 0.95rem;
+  margin: 1rem 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  font-weight: bold;
+}
+
+.hp-body section + section { margin-top: 1.25rem; }
+
+.hp-meta {
+  margin-top: 3rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ───────── BLOG / random-blogging posts ───────── */
+.post {
+  margin: 0 0 4rem;
+  padding: 0 0 3rem;
+  border-bottom: 1px solid var(--rule);
+}
+.post:last-child { border-bottom: none; }
+.post h2 {
+  font-size: 1.6rem;
+  margin-bottom: 0.25rem;
+  line-height: 1.25;
+}
+.post .meta {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 0 0 1.25rem;
+  letter-spacing: 0.04em;
+}
+.post .post-images {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin: 1.25rem 0;
+}
+.post .post-images img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: #ffffff;
+  display: block;
+}
+.post .post-images figcaption {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 0.3rem;
+}
+@media (max-width: 600px) {
+  .post .post-images { grid-template-columns: 1fr; }
+}
+
+/* ───────── PICS grid ───────── */
+/* Bigger images, natural aspect ratio (no square crop), 2 columns on desktop. */
+.pics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem 1.5rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.pics li { margin: 0; }
+.pics figure { margin: 0; }
+.pics img {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: #ffffff;
+  /* No aspect-ratio, no object-fit — natural image dimensions */
+}
+.pics figcaption {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.5rem;
+  font-family: var(--mono);
+}
+@media (max-width: 720px) {
+  .pics { grid-template-columns: 1fr; gap: 1.5rem; }
+}
+
+/* ───────── BLOG meta tag (matches timeline DRAFT styling) ───────── */
+.post .meta code {
+  color: black;
+  background: #ffffff;
+  padding: 0.05rem 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 1px solid var(--rule);
+}
+
+/* ───────── BLOG image click-to-enlarge ───────── */
+.post-images figure a {
+  display: block;
+  cursor: zoom-in;
+  transition: opacity 0.15s ease;
+}
+.post-images figure a:hover { opacity: 0.85; }
+
+/* ───────── BLOG iframe embeds (Spotify, Drive, Manifesto) ───────── */
+.post-embed {
+  margin: 1.25rem 0;
+  width: 100%;
+}
+.post-embed iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;  /* sane default for unknown embeds */
+  height: auto;
+  border: 1px solid var(--rule);
+  background: #ffffff;
+}
+/* Tall embeds for Drive PDFs and the manifesto preview */
+.post-embed iframe[src*="drive.google.com"],
+.post-embed iframe[src$=".html"],
+.post-embed iframe[src*="/manifesto"] {
+  aspect-ratio: auto;
+  height: 600px;
+}
+/* YouTube — 16:9 (already the default, kept explicit) */
+.post-embed iframe[src*="youtube.com"] { aspect-ratio: 16 / 9; height: auto; }
+/* S-Hawk eye animation lives in a square viewport — give it room */
+.post-embed iframe[src*="s-hawk.com"] {
+  aspect-ratio: 1 / 1;
+  height: auto;
+  background: #000000;  /* matches s-hawk's dark page */
+}
+
+/* ───────── BLOG placeholder image (when no real image exists) ───────── */
+.post-images .placeholder {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background:
+    linear-gradient(135deg, transparent 49%, var(--rule) 49%, var(--rule) 51%, transparent 51%),
+    linear-gradient(45deg, transparent 49%, var(--rule) 49%, var(--rule) 51%, transparent 51%),
+    #ffffff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--rule);
+}
+
+/* ───────── BLOG timeline subheading ───────── */
+.timeline {
+  font-size: 0.92rem;
+  color: var(--muted);
+  line-height: 1.9;
+}
+.timeline strong { color: black; font-weight: bold; }
+.timeline code {
+  color: black;
+  background: #ffffff;
+  padding: 0.05rem 0.4rem;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+}
+.timeline a {
+  color: var(--muted);
+  text-decoration: none;
+}
+.timeline a:hover { color: black; text-decoration: underline; }
+
+/* ───────── HOME purpose subheading (same style as beliefs ID-format) ───────── */
+.site-meta {
+  font-size: 0.92rem;
+  color: var(--muted);
+  line-height: 1.8;
+}
+/* Unified lead-word styling: same look across site-meta, hp-legend, timeline */
+.site-meta strong, .hp-legend strong, .timeline strong {
+  color: black;
+  font-weight: bold;
+  letter-spacing: 0.04em;
+}
+.site-meta code {
+  color: black;
+  background: #ffffff;
+  padding: 0.05rem 0.4rem;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+}
+
+/* ───────── GLITCH pixel matrices (CRT style) ───────── */
+/* Small square crops of the banner image, fixed to the viewport.
+   Clustered in spots, scattered overall, like CRT signal artifacts. */
+
+.glitches {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.g {
+  position: absolute;
+  background-image: var(--banner-url);
+  background-repeat: repeat;
+  background-size: 1600px 242px;
+  image-rendering: pixelated;
+  opacity: 0.92;
+  filter: contrast(1.15) saturate(1.3);
+}
+
+/* hide on narrow viewports (no margin to fill) */
+@media (max-width: 1100px) {
+  .glitches { display: none; }
+}
+
+/* ─── LEFT margin ─── */
+
+/* cluster top-left (8–12vh, x:18–48px) */
+.g-1  { top:  8vh; left: 22px; width:  8px; height:  8px; background-position:  -120px  -60px; }
+.g-2  { top:  9vh; left: 32px; width:  6px; height:  6px; background-position:  -540px -180px; }
+.g-3  { top: 10vh; left: 24px; width: 12px; height:  4px; background-position:  -880px -240px; }
+.g-4  { top: 11vh; left: 40px; width:  4px; height:  4px; background-position: -1320px  -90px; }
+
+/* lone strip mid-upper-left */
+.g-5  { top: 18vh; left: 60px; width:  4px; height: 14px; background-position:  -200px -210px; }
+
+/* cluster mid-left (28–32vh) */
+.g-6  { top: 28vh; left: 16px; width:  6px; height:  6px; background-position:  -740px -150px; }
+.g-7  { top: 29vh; left: 26px; width: 10px; height: 10px; background-position: -1100px  -50px; }
+.g-8  { top: 30vh; left: 14px; width:  4px; height:  4px; background-position:  -460px -300px; }
+.g-9  { top: 31vh; left: 36px; width:  8px; height:  8px; background-position: -1980px -120px; }
+
+/* solo dots scattered down left side */
+.g-10 { top: 42vh; left: 50px; width:  4px; height:  4px; background-position:  -800px -200px; }
+.g-11 { top: 49vh; left: 22px; width: 14px; height:  3px; background-position: -1700px -100px; }
+.g-12 { top: 55vh; left: 70px; width:  6px; height:  6px; background-position:  -300px -260px; }
+
+/* cluster lower-left (66–72vh) */
+.g-13 { top: 66vh; left: 30px; width:  8px; height:  8px; background-position:  -600px -160px; }
+.g-14 { top: 67vh; left: 40px; width:  4px; height: 12px; background-position: -2100px -200px; }
+.g-15 { top: 68vh; left: 28px; width:  6px; height:  6px; background-position: -1500px -300px; }
+.g-16 { top: 71vh; left: 52px; width:  4px; height:  4px; background-position:  -940px  -80px; }
+
+/* bottom-left scatter */
+.g-17 { top: 82vh; left: 18px; width: 10px; height:  4px; background-position:  -440px -220px; }
+.g-18 { top: 88vh; left: 36px; width:  6px; height:  6px; background-position: -1860px -160px; }
+
+/* ─── RIGHT margin ─── */
+
+/* lone strip top-right */
+.g-19 { top:  6vh; right: 48px; width:  4px; height: 16px; background-position: -2200px  -60px; }
+
+/* cluster upper-right (14–18vh) */
+.g-20 { top: 14vh; right: 22px; width:  8px; height:  8px; background-position:  -350px -120px; }
+.g-21 { top: 15vh; right: 34px; width:  6px; height:  6px; background-position: -1080px -260px; }
+.g-22 { top: 16vh; right: 20px; width:  4px; height:  4px; background-position:  -700px  -40px; }
+.g-23 { top: 18vh; right: 46px; width: 14px; height:  3px; background-position: -2000px -300px; }
+
+/* solo mid-right */
+.g-24 { top: 26vh; right: 60px; width:  6px; height:  6px; background-position:  -120px -180px; }
+.g-25 { top: 33vh; right: 18px; width:  4px; height:  4px; background-position:  -880px  -90px; }
+
+/* cluster mid-right (42–46vh) */
+.g-26 { top: 42vh; right: 28px; width:  8px; height:  8px; background-position: -1660px -210px; }
+.g-27 { top: 43vh; right: 38px; width:  4px; height: 10px; background-position: -1240px  -40px; }
+.g-28 { top: 44vh; right: 26px; width:  6px; height:  6px; background-position:  -500px -290px; }
+.g-29 { top: 46vh; right: 50px; width:  4px; height:  4px; background-position: -1980px -170px; }
+
+/* scanline-style strips */
+.g-30 { top: 53vh; right: 24px; width: 16px; height:  2px; background-position:  -260px  -50px; }
+.g-31 { top: 58vh; right: 60px; width:  4px; height:  4px; background-position:  -760px -140px; }
+.g-32 { top: 63vh; right: 30px; width: 18px; height:  3px; background-position: -1400px -240px; }
+
+/* cluster lower-right (74–78vh) */
+.g-33 { top: 74vh; right: 18px; width:  8px; height:  8px; background-position:  -340px -260px; }
+.g-34 { top: 75vh; right: 30px; width:  6px; height:  6px; background-position: -1820px  -90px; }
+.g-35 { top: 76vh; right: 22px; width:  4px; height: 12px; background-position:  -620px -300px; }
+
+/* bottom-right scatter */
+.g-36 { top: 90vh; right: 40px; width:  6px; height:  6px; background-position: -2300px -200px; }
+
+/* ───────── A11y skip link ───────── */
+.skip-link {
+  position: absolute;
+  top: -40px; left: 0;
+  background: var(--text);
+  color: var(--bg);
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  z-index: 100;
+}
+.skip-link:focus { top: 0; }
+
+/* ───────── mobile ───────── */
+@media (max-width: 700px) {
+  html, body { font-size: 17px; }
+  main { padding: 2rem 1.25rem 4rem; }
+  h1.name { font-size: 2rem; }
+  .banner { max-height: 120px; }
+  nav.top a { display: inline-block; margin: 0 1rem 0.4rem 0; }
+  .hp summary { flex-wrap: wrap; gap: 0.4rem; }
+  .hp-body { margin-left: 0; padding-left: 0.75rem; }
+}
+
+/* ───────── print ───────── */
+@media print {
+  body { background: white; color: black; }
+  .banner, nav.top, .glitches { display: none; }
+  a { color: black; text-decoration: underline; }
+  details { display: block; }
+  details > summary { display: block; font-weight: bold; }
+  details[open] > summary, details > * { display: block !important; }
+}
