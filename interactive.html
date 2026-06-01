@@ -124,6 +124,8 @@
 
     <p>This is the interactive companion to the post <a href="/rotate-cross-section.html">Do You Have the Keys to Rotate a 3D Cross Section?</a> Play around with the slicing to feel what I am talking about: take a shape, cut it with a flat one dimension lower, and watch what the smaller world actually sees. Start at 1D and climb all the way up to a tesseract.</p>
 
+    <p>There is a second demo too, the companion to <a href="/slicing-the-static-universe.html">part three</a>: <a href="/interactive-observers.html">two observers, two slices, one static block</a>.</p>
+
     <section class="slicer">
       <div class="kicker">cross-sections · the slicing principle</div>
       <h2>Slicing a shape <span class="dimword">one dimension down</span></h2>
@@ -302,7 +304,7 @@ function draw2d(){
   let seg=null, len=0;
   if(S.d2.shape==='circle'){
     const k=1-rho*rho;
-    if(k>0){const t=Math.sqrt(k);
+    if(k>=0){const t=Math.sqrt(k);
       seg=[[P0[0]-t*dir[0],P0[1]-t*dir[1]],[P0[0]+t*dir[0],P0[1]+t*dir[1]]];
       len=2*t;}
   }else{
@@ -330,10 +332,11 @@ function draw2d(){
     ctx.strokeStyle=C.acc;ctx.lineWidth=6;ctx.lineCap='round';
     ctx.beginPath();ctx.moveTo(ox,cy-half);ctx.lineTo(ox,cy+half);ctx.stroke();ctx.lineCap='butt';
   }
+  const cs2 = !seg ? 'empty (line misses the shape)' : (len < 0.06 ? 'a point (just grazing)' : 'a segment');
   setReadout([
     ['shape', S.d2.shape],
     ['slice length', seg?len.toFixed(3):'0.000'],
-    ['cross-section', 'a segment (always)']
+    ['cross-section', cs2]
   ]);
 }
 
@@ -401,7 +404,7 @@ function draw3d(){
   setReadout([
     ['shape', S.d3.shape],
     ['slice height z', zc.toFixed(2)],
-    ['cross-section', S.d3.shape==='cube' ? (sides? sides+'-sided polygon':'— (outside)') : (Number.isFinite(sides)?'—':'a circle')]
+    ['cross-section', S.d3.shape==='cube' ? (sides>=3 ? sides+'-sided polygon' : sides===2 ? 'a segment (edge-on)' : sides===1 ? 'a point (corner)' : '— (outside)') : (Number.isFinite(sides)?'—':'a circle')]
   ]);
 }
 
@@ -496,7 +499,7 @@ function setReadout(rows){
 /* ---------- UI ---------- */
 const CAP={
   '1d':'A <b>0-D point</b> sweeps a <b>1-D segment</b>. The observer only knows "something is here" or "nothing is here." This is the seed of the whole idea.',
-  '2d':'A <b>1-D line</b> cuts a <b>2-D shape</b>. The result is always a segment, so only its <b>length</b> changes. Switch between circle and square, translate and rotate the line.',
+  '2d':'A <b>1-D line</b> cuts a <b>2-D shape</b>. The result is <b>empty</b> if the line misses, <b>a point</b> if it just grazes the edge, and <b>a segment</b> if it cuts through. When it is a segment, only its <b>length</b> changes. Switch between circle and square, translate and rotate the line.',
   '3d':'A <b>2-D plane</b> cuts a <b>3-D solid</b>. Now shape can morph. The <b>sphere</b> stays a circle (size only). The <b>cube</b> walks through 3, 4, 5, 6 sides as it rotates — this is the case you were stuck on.',
   '4d':'A <b>3-D space</b> cuts a <b>4-D solid</b>. The <b>tesseract</b> gives a cross-section that morphs as it rotates in two planes at once — watch faces appear and vanish while Euler V−E+F stays 2. Switch to the <b>sphere</b> (a glome) and, just like every round object below it, only its size changes — a solid ball that grows and shrinks. Rotation does nothing to it.'
 };

@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Two Observers, Two Slices · Marco Mascolo</title>
+  <meta name="description" content="An interactive spacetime diagram: two people, each with their own sweeping now-slice, in one static block. When do they share a now, when do they meet, and what happens near light speed.">
+  <link rel="canonical" href="https://marcomascolo.com/interactive-observers.html">
+  <meta property="og:title" content="Two Observers, Two Slices">
+  <meta property="og:description" content="Two people, two sweeping slices, one static block.">
+  <meta property="og:image" content="/assets/banner.jpg?v=3">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <script>/* CYCLE DISABLED */</script>
+  <link rel="stylesheet" href="/style.css?v=9">
+  <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+  <style>
+    .slicer { margin: 2rem 0 0; }
+    .slicer .kicker { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+    .slicer h2 { margin: 0 0 0.4rem; font-size: 1.4rem; }
+    .slicer h2 .dimword { color: var(--muted); font-weight: normal; }
+    .slicer .sub { color: var(--muted); font-size: 1rem; margin: 0 0 1.25rem; max-width: 62ch; }
+    .slicer .stage { background: #fff; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+    .slicer .caption { padding: 0.85rem 1rem; border-bottom: 1px solid var(--rule); font-family: var(--serif); font-size: 0.95rem; color: var(--muted); }
+    .slicer .caption b { color: #111; font-weight: bold; }
+    .slicer .canvas-host { position: relative; width: 100%; background: #fff; }
+    .slicer canvas { display: block; width: 100%; height: auto; }
+    .slicer .readout { position: absolute; top: 10px; left: 12px; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); background: rgba(255,255,255,0.85); border: 1px solid var(--rule); border-radius: 2px; padding: 0.5rem 0.7rem; backdrop-filter: blur(2px); line-height: 1.8; }
+    .slicer .readout .v { color: #111; font-weight: 600; }
+    .slicer .readout .lab { color: #999; }
+    .slicer .readout .ra { color: #ff3a1f; font-weight:600; }
+    .slicer .readout .rb { color: #2456c8; font-weight:600; }
+    .slicer .controls { padding: 1rem; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); align-items: end; border-top: 1px solid var(--rule); }
+    .slicer .ctl label { display: block; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+    .slicer .ctl label .n { color: var(--orange); float: right; text-transform: none; letter-spacing: 0; }
+    .slicer input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 3px; border-radius: 3px; background: var(--rule); outline: none; }
+    .slicer input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--orange); cursor: pointer; border: 2px solid #fff; box-shadow: 0 0 0 1px var(--rule); }
+    .slicer input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--orange); cursor: pointer; border: 2px solid #fff; }
+    .slicer input.ra::-webkit-slider-thumb { background:#ff3a1f; } .slicer input.rb::-webkit-slider-thumb { background:#2456c8; }
+    .slicer input.ra::-moz-range-thumb { background:#ff3a1f; } .slicer input.rb::-moz-range-thumb { background:#2456c8; }
+    .slicer .playbtn { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.03em; background: #fff; border: 1px solid var(--rule); color: #111; padding: 0.55rem 0.9rem; border-radius: 2px; cursor: pointer; width: max-content; }
+    .slicer .playbtn:hover { border-color: var(--orange); }
+    .slicer .playbtn.on { color: var(--orange); border-color: var(--orange); }
+    .slicer .hint { margin-top: 1rem; font-family: var(--mono); font-size: 0.78rem; color: #999; line-height: 1.7; }
+    .slicer .hint b { color: #111; font-weight: 600; }
+    .slicer .legend { display:flex; gap:1.2rem; flex-wrap:wrap; margin:0.6rem 0 0; font-family:var(--mono); font-size:0.74rem; color:var(--muted); }
+    .slicer .legend span b { font-weight:700; }
+    .a { color:#ff3a1f; } .b { color:#2456c8; }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div class="glitches" aria-hidden="true">
+    <span class="g g-1"></span><span class="g g-2"></span><span class="g g-3"></span><span class="g g-4"></span>
+    <span class="g g-5"></span><span class="g g-6"></span><span class="g g-7"></span><span class="g g-8"></span>
+    <span class="g g-9"></span><span class="g g-10"></span><span class="g g-11"></span><span class="g g-12"></span>
+    <span class="g g-13"></span><span class="g g-14"></span><span class="g g-15"></span><span class="g g-16"></span>
+    <span class="g g-17"></span><span class="g g-18"></span><span class="g g-19"></span><span class="g g-20"></span>
+    <span class="g g-21"></span><span class="g g-22"></span><span class="g g-23"></span><span class="g g-24"></span>
+    <span class="g g-25"></span><span class="g g-26"></span><span class="g g-27"></span><span class="g g-28"></span>
+    <span class="g g-29"></span><span class="g g-30"></span><span class="g g-31"></span><span class="g g-32"></span>
+    <span class="g g-33"></span><span class="g g-34"></span><span class="g g-35"></span><span class="g g-36"></span>
+  </div>
+
+  <main id="main">
+    <header class="intro">
+      <h1 class="name">Two Observers, Two Slices</h1>
+      <nav class="top" aria-label="Main">
+        <a href="/">Home</a>
+        <a href="/me.html">Me</a>
+        <a href="/beliefs.html">Beliefs</a>
+        <a href="/random-blogging.html">Blog</a>
+        <a href="/interactive.html" aria-current="page">Interactive</a>
+        <a href="/pics.html">Pics</a>
+      </nav>
+    </header>
+
+    <hr class="divider">
+
+    <p>Companion to <a href="/slicing-the-static-universe.html">part three</a>. This is the honest, rigorous version of the "two people, two spinning cross sections" idea: a <strong>spacetime diagram</strong> with one space axis and one time axis. It is a 2D stand in for your real situation (a 3D slice of a 4D world), because a faithful 4D picture cannot be drawn. Everything here is real special relativity, just one dimension down. Other demos: <a href="/interactive.html">slicing 1D to 4D</a>.</p>
+
+    <section class="slicer">
+      <div class="kicker">special relativity · one space, one time</div>
+      <h2>When do two people <span class="dimword">share a now?</span></h2>
+      <p class="sub">The grey square is the static block: space runs across, time runs up, and the diagonal grey lines are the light cone (speed of light). Two people are two worldlines. Each carries a "now," a slice of simultaneity that tilts with their speed. Drive their speeds and sweep time, and watch when their nows line up, when they meet, and what happens near light speed.</p>
+      <div class="legend">
+        <span class="a"><b>A</b> worldline (solid) and now (dashed)</span>
+        <span class="b"><b>B</b> worldline (solid) and now (dashed)</span>
+        <span>grey diagonals = light cone</span>
+      </div>
+
+      <div class="stage">
+        <div class="caption" id="caption"></div>
+        <div class="canvas-host">
+          <canvas id="cv"></canvas>
+          <div class="readout" id="readout"></div>
+        </div>
+        <div class="controls" id="controls"></div>
+      </div>
+      <div class="hint" id="hint"></div>
+    </section>
+
+    <hr class="divider">
+
+    <p><a href="/slicing-the-static-universe.html">← Back to part three</a></p>
+  </main>
+
+  <footer class="site-footer">
+    <p class="site-footer-links">
+      <a href="https://hanomi.ai">Hanomi</a><span class="sep">·</span>
+      <a href="https://s-hawk.com">S-Hawk</a><span class="sep">·</span>
+      <a href="https://www.linkedin.com/in/marco-mascolo/">LinkedIn</a><span class="sep">·</span>
+      <a href="https://x.com/_marco_masc">X</a><span class="sep">·</span>
+      <a href="/manifesto.html">Manifesto</a><span class="sep">·</span>
+      <a href="mailto:marco.mascolo.job@gmail.com">marco.mascolo.job@gmail.com</a>
+    </p>
+    <p class="site-footer-meta">
+      &copy; 2026 marco mascolo<span class="sep">·</span>MADE IN ITALY<span class="sep">·</span>BUILDING IN SAN FRANCISCO
+    </p>
+  </footer>
+
+<script>
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+let W=900, H=560, DPR=1;
+const R = 5;                 // world half-extent (space and time units)
+const COLA = '#ff3a1f', COLB = '#2456c8';
+const INK='#111', MUT='#666', GRID='#ededed', RULE='#d8d8d8', CONE='#bdbdbd';
+const MONO = "'SF Mono', Menlo, Consolas, monospace";
+
+const S = { vA:0.35, vB:-0.5, T:-1.6, bend:0.0, playing:true, t:0, xA0:-1.8, xB0:1.8 };
+
+function resize(){
+  const host = cv.parentElement;
+  const cssW = host.clientWidth;
+  const cssH = Math.round(cssW * 0.62);
+  DPR = Math.min(window.devicePixelRatio||1, 2);
+  cv.style.height = cssH+'px';
+  cv.width = cssW*DPR; cv.height = cssH*DPR;
+  W = cssW; H = cssH;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+window.addEventListener('resize', resize);
+
+let SC = 1, CX = 0, CY = 0;
+function computeView(){ CX = W/2; CY = H/2; SC = Math.min(W*0.46, H*0.46)/R; }
+function P(x,t){ return [CX + x*SC, CY - t*SC]; }    // world (x,t) -> screen
+
+function line(a,b,col,w,dash){
+  ctx.strokeStyle=col; ctx.lineWidth=w||1; ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); ctx.setLineDash([]);
+}
+function dot(p,r,col){ ctx.fillStyle=col; ctx.beginPath(); ctx.arc(p[0],p[1],r,0,7); ctx.fill(); }
+function gamma(v){ return 1/Math.sqrt(Math.max(1e-6, 1 - v*v)); }
+function bendOffset(t){ return S.bend * 0.10 * (t*t - R*R/3); }   // gentle curvature (gravity, speculative)
+
+// draw a curve x(t) for t in [-R,R]
+function curveT(xfun, col, w, dash){
+  ctx.strokeStyle=col; ctx.lineWidth=w; ctx.setLineDash(dash||[]); ctx.beginPath();
+  let first=true;
+  for(let i=0;i<=120;i++){ const t=-R + (2*R)*i/120; const p=P(xfun(t)+bendOffset(t), t); if(first){ctx.moveTo(p[0],p[1]);first=false;} else ctx.lineTo(p[0],p[1]); }
+  ctx.stroke(); ctx.setLineDash([]);
+}
+// draw a now-line (simultaneity) t(x) for x in [-R,R]
+function curveX(tfun, col, w, dash){
+  ctx.strokeStyle=col; ctx.lineWidth=w; ctx.setLineDash(dash||[]); ctx.beginPath();
+  let first=true;
+  for(let i=0;i<=120;i++){ const x=-R + (2*R)*i/120; const tt=tfun(x); const p=P(x + bendOffset(tt), tt); if(first){ctx.moveTo(p[0],p[1]);first=false;} else ctx.lineTo(p[0],p[1]); }
+  ctx.stroke(); ctx.setLineDash([]);
+}
+
+function setReadout(rows){
+  document.getElementById('readout').innerHTML = rows.map(r=>'<span class="lab">'+r[0]+'</span> '+r[1]).join('<br>');
+}
+
+function draw(){
+  computeView();
+  ctx.clearRect(0,0,W,H);
+
+  // grid
+  ctx.strokeStyle=GRID; ctx.lineWidth=1;
+  for(let k=-R;k<=R;k++){ line(P(k,-R),P(k,R),GRID,1); line(P(-R,k),P(R,k),GRID,1); }
+  // axes
+  line(P(-R,0),P(R,0),RULE,1.2); line(P(0,-R),P(0,R),RULE,1.2);
+  ctx.fillStyle=MUT; ctx.font='11px '+MONO; ctx.textAlign='left';
+  ctx.fillText('space →', P(R*0.55,0)[0], P(0,0)[1]-6);
+  ctx.save(); const ty=P(0,R*0.6); ctx.translate(ty[0]+10, ty[1]); ctx.rotate(-Math.PI/2); ctx.fillText('time ↑', 0,0); ctx.restore();
+  // light cone through origin
+  line(P(-R,-R),P(R,R),CONE,1.4,[5,4]); line(P(-R,R),P(R,-R),CONE,1.4,[5,4]);
+  ctx.fillStyle=CONE; ctx.font='10px '+MONO; ctx.textAlign='left';
+  ctx.fillText('light', P(R*0.7,R*0.78)[0], P(0,R*0.82)[1]);
+
+  const gA=gamma(S.vA), gB=gamma(S.vB);
+  const xA = (t)=> S.xA0 + S.vA*t;
+  const xB = (t)=> S.xB0 + S.vB*t;
+  // current events at lab-time T
+  const EA = [xA(S.T), S.T], EB = [xB(S.T), S.T];
+  // now-lines: in observer frame, simultaneity has slope v: t = T + v (x - xE)
+  const nowA = (x)=> S.T + S.vA*(x - EA[0]);
+  const nowB = (x)=> S.T + S.vB*(x - EB[0]);
+
+  // worldlines
+  curveT(xA, COLA, 2.4);
+  curveT(xB, COLB, 2.4);
+  // now-lines (dashed)
+  curveX(nowA, COLA, 1.6, [6,4]);
+  curveX(nowB, COLB, 1.6, [6,4]);
+  // current-event dots
+  const pEA=P(EA[0]+bendOffset(EA[1]),EA[1]), pEB=P(EB[0]+bendOffset(EB[1]),EB[1]);
+  dot(pEA,5,COLA); dot(pEB,5,COLB);
+  ctx.fillStyle=COLA; ctx.font='600 12px '+MONO; ctx.textAlign='center'; ctx.fillText('A', pEA[0], pEA[1]-10);
+  ctx.fillStyle=COLB; ctx.fillText('B', pEB[0], pEB[1]-10);
+
+  // meeting event (worldlines cross)
+  let meetMsg, metWhen=null;
+  if(Math.abs(S.vA-S.vB) > 1e-4){
+    const tm = (S.xB0 - S.xA0)/(S.vA - S.vB); const xm = xA(tm); metWhen=tm;
+    if(Math.abs(tm)<=R && Math.abs(xm)<=R){
+      const pm=P(xm+bendOffset(tm),tm);
+      ctx.fillStyle='#111'; ctx.beginPath();
+      for(let i=0;i<10;i++){const a=i*Math.PI/5; const rr=i%2?3:7; ctx.lineTo(pm[0]+rr*Math.cos(a-Math.PI/2), pm[1]+rr*Math.sin(a-Math.PI/2));}
+      ctx.closePath(); ctx.fill();
+      ctx.font='10px '+MONO; ctx.textAlign='left'; ctx.fillText('they meet here', pm[0]+10, pm[1]-6);
+      meetMsg = (S.T < tm) ? 'yes, ahead of both of you (one shared event)' : 'yes, already happened (one shared event)';
+    } else meetMsg = 'their paths do not cross inside this window';
+  } else {
+    meetMsg = (Math.abs(S.xA0-S.xB0)<1e-6) ? 'same worldline' : 'parallel: they never meet (same speed, never cross)';
+  }
+
+  // shared-now status
+  const parallelNow = Math.abs(S.vA - S.vB) < 0.02;
+  let shareMsg;
+  if(parallelNow){ shareMsg = 'YES, at rest relative to each other: same now, always'; }
+  else {
+    // the two now-lines cross at one event
+    const xc = (S.T*(1) - 0) ; // solve nowA(x)=nowB(x): vA(x-EA0) = vB(x-EB0)
+    const xstar = (S.vA*EA[0] - S.vB*EB[0])/(S.vA - S.vB);
+    const tstar = nowA(xstar);
+    if(Math.abs(xstar)<=R && Math.abs(tstar)<=R){ const ps=P(xstar+bendOffset(tstar),tstar); ctx.strokeStyle='#111'; ctx.lineWidth=1; line([ps[0]-5,ps[1]],[ps[0]+5,ps[1]],'#111',1); line([ps[0],ps[1]-5],[ps[0],ps[1]+5],'#111',1); }
+    shareMsg = 'no: your nows agree on only one event right now';
+  }
+
+  // relativistic relative speed
+  const w = (S.vA - S.vB)/(1 - S.vA*S.vB);
+  const fr = (x)=> (x>=0?'+':'')+x.toFixed(2);
+  const tauA = (S.T)*Math.sqrt(Math.max(0,1-S.vA*S.vA));
+  const tauB = (S.T)*Math.sqrt(Math.max(0,1-S.vB*S.vB));
+
+  setReadout([
+    ['<span class="ra">A</span> speed', '<span class="v">'+fr(S.vA)+' c</span> &middot; γ='+gA.toFixed(2)+' &middot; clock '+tauA.toFixed(2)],
+    ['<span class="rb">B</span> speed', '<span class="v">'+fr(S.vB)+' c</span> &middot; γ='+gB.toFixed(2)+' &middot; clock '+tauB.toFixed(2)],
+    ['relative speed', '<span class="v">'+fr(w)+' c</span>'],
+    ['share a now?', '<span class="v">'+shareMsg+'</span>'],
+    ['do they meet?', '<span class="v">'+meetMsg+'</span>']
+  ]);
+}
+
+/* ---------- UI ---------- */
+function ctlRange(id,label,min,max,step,val,cls){
+  return '<div class="ctl"><label>'+label+'<span class="n" id="'+id+'v">'+(+val).toFixed(2)+'</span></label>'+
+    '<input type="range" class="'+(cls||'')+'" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'"></div>';
+}
+function buildControls(){
+  const c=document.getElementById('controls');
+  c.innerHTML =
+      ctlRange('vA','speed of A (c)',-0.97,0.97,0.01,S.vA,'ra')
+    + ctlRange('vB','speed of B (c)',-0.97,0.97,0.01,S.vB,'rb')
+    + ctlRange('T','sweep time',-R*0.95,R*0.95,0.01,S.T)
+    + ctlRange('bend','bend the slices (gravity)',0,1,0.01,S.bend)
+    + '<div class="ctl"><label>animation</label><button class="playbtn '+(S.playing?'on':'')+'" id="play">'+(S.playing?'❚❚  pause':'▶  play')+'</button></div>';
+  document.getElementById('caption').innerHTML = CAP();
+  document.getElementById('hint').innerHTML = HINT();
+  wire();
+}
+function CAP(){
+  return 'A <b>spacetime diagram</b>: space across, time up, light at 45 degrees. Each person is a <b>worldline</b>; their <b>now</b> is the dashed slice of events they call "this instant." Two people at the same speed share the same now <b>always</b> (their dashed lines coincide). Give them different speeds and the slices <b>tilt apart</b> (relativity of simultaneity), agreeing on only one event. Either way, <b>meeting</b> (the star) and <b>seeing</b> happen where the solid worldlines cross, no matter how either one slices time.';
+}
+function HINT(){
+  return '<b>Speed A / B</b> tilt each now-slice (this is the real "spin", a Lorentz boost, not a circular spin) &middot; <b>sweep time</b> moves both nows up the block &middot; push a speed toward &plusmn;1 and its <b>clock</b> freezes toward 0 (a photon, proper time zero) while its slice flattens onto the light cone &middot; <b>bend</b> curves the slices, a loose picture of gravity; bend hard and a slice folds, the speculative road to a closed timelike curve, which real physics almost certainly forbids.';
+}
+function wire(){
+  const bind=(id,fn)=>{const e=document.getElementById(id); if(e)e.addEventListener('input',ev=>{fn(parseFloat(ev.target.value)); const l=document.getElementById(id+'v'); if(l)l.textContent=parseFloat(ev.target.value).toFixed(2); if(id!=='T'){S.playing=false; syncPlay();}});};
+  bind('vA',v=>S.vA=v); bind('vB',v=>S.vB=v); bind('T',v=>S.T=v); bind('bend',v=>S.bend=v);
+  const pb=document.getElementById('play'); if(pb)pb.onclick=()=>{S.playing=!S.playing; syncPlay();};
+}
+function syncPlay(){ const pb=document.getElementById('play'); if(pb){ pb.className='playbtn '+(S.playing?'on':''); pb.innerHTML=S.playing?'❚❚  pause':'▶  play'; } }
+function refreshT(){ const e=document.getElementById('T'), l=document.getElementById('Tv'); if(e){ e.value=S.T; if(l)l.textContent=S.T.toFixed(2); } }
+
+function tick(){
+  if(S.playing){ S.t+=0.016; S.T = Math.sin(S.t*0.35)*R*0.9; refreshT(); }
+  draw();
+  requestAnimationFrame(tick);
+}
+
+resize(); computeView(); buildControls(); tick();
+</script>
+</body>
+</html>
