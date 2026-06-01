@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Interactive · Marco Mascolo</title>
+  <meta name="description" content="Play with the slicing. An interactive companion to the cross-section post: cut a shape with a flat one dimension lower and watch what the smaller world sees. 1D up to a tesseract.">
+  <link rel="canonical" href="https://marcomascolo.com/interactive.html">
+  <meta property="og:title" content="Interactive · Marco Mascolo">
+  <meta property="og:description" content="Play with the slicing principle, 1D up to 4D.">
+  <meta property="og:image" content="/assets/banner.jpg?v=3">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <script>/* CYCLE DISABLED — to re-enable: move /assets/_unused/banners/banner-{1,3,4,5}.webp back to /assets/, then uncomment the IIFE below. (function(){var n=Math.floor(Math.random()*5)+1;document.documentElement.style.setProperty("--banner-url","url(/assets/banner-"+n+".webp)");})(); */</script>
+  <link rel="stylesheet" href="/style.css?v=9">
+  <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-192.png">
+  <style>
+    /* ── interactive slicer widget, scoped to match the site (white / serif / orange) ── */
+    .slicer { margin: 2rem 0 0; }
+    .slicer .kicker {
+      font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem;
+    }
+    .slicer h2 { margin: 0 0 0.4rem; font-size: 1.4rem; }
+    .slicer h2 .dimword { color: var(--muted); font-weight: normal; }
+    .slicer .sub { color: var(--muted); font-size: 1rem; margin: 0 0 1.25rem; max-width: 60ch; }
+    .slicer .tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; margin: 0 0 1.1rem; }
+    .slicer .tab {
+      font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.02em;
+      background: #fff; border: 1px solid var(--rule); color: var(--muted);
+      padding: 0.5rem 0.8rem; border-radius: 2px; cursor: pointer; transition: 0.15s; user-select: none;
+    }
+    .slicer .tab:hover { border-color: #bbb; color: #111; }
+    .slicer .tab.on { border-color: var(--orange); color: var(--orange); }
+    .slicer .stage { background: #fff; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+    .slicer .caption {
+      padding: 0.85rem 1rem; border-bottom: 1px solid var(--rule);
+      font-family: var(--serif); font-size: 0.95rem; color: var(--muted);
+    }
+    .slicer .caption b { color: #111; font-weight: bold; }
+    .slicer .canvas-host { position: relative; width: 100%; background: #fff; }
+    .slicer canvas { display: block; width: 100%; height: auto; }
+    .slicer .readout {
+      position: absolute; top: 10px; left: 12px; font-family: var(--mono); font-size: 0.7rem;
+      color: var(--muted); background: rgba(255,255,255,0.82); border: 1px solid var(--rule);
+      border-radius: 2px; padding: 0.5rem 0.7rem; backdrop-filter: blur(2px); line-height: 1.75;
+    }
+    .slicer .readout .v { color: #111; font-weight: 600; }
+    .slicer .readout .lab { color: #aaa; }
+    .slicer .controls {
+      padding: 1rem; display: grid; gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      align-items: end; border-top: 1px solid var(--rule);
+    }
+    .slicer .ctl label {
+      display: block; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem;
+    }
+    .slicer .ctl label .n { color: var(--orange); float: right; text-transform: none; letter-spacing: 0; }
+    .slicer input[type=range] {
+      -webkit-appearance: none; appearance: none; width: 100%; height: 3px;
+      border-radius: 3px; background: var(--rule); outline: none;
+    }
+    .slicer input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
+      background: var(--orange); cursor: pointer; border: 2px solid #fff; box-shadow: 0 0 0 1px var(--rule);
+    }
+    .slicer input[type=range]::-moz-range-thumb {
+      width: 14px; height: 14px; border-radius: 50%; background: var(--orange);
+      cursor: pointer; border: 2px solid #fff;
+    }
+    .slicer .seg { display: flex; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; width: max-content; }
+    .slicer .seg button {
+      font-family: var(--mono); font-size: 0.78rem; background: #fff; color: var(--muted);
+      border: none; padding: 0.5rem 0.85rem; cursor: pointer; transition: 0.12s;
+    }
+    .slicer .seg button.on { background: var(--orange); color: #fff; font-weight: 600; }
+    .slicer .playbtn {
+      font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.03em; background: #fff;
+      border: 1px solid var(--rule); color: #111; padding: 0.55rem 0.9rem; border-radius: 2px;
+      cursor: pointer; width: max-content;
+    }
+    .slicer .playbtn:hover { border-color: var(--orange); }
+    .slicer .playbtn.on { color: var(--orange); border-color: var(--orange); }
+    .slicer .hint { margin-top: 1rem; font-family: var(--mono); font-size: 0.78rem; color: #999; line-height: 1.7; }
+    .slicer .hint b { color: #111; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div class="glitches" aria-hidden="true">
+    <span class="g g-1"></span><span class="g g-2"></span><span class="g g-3"></span><span class="g g-4"></span>
+    <span class="g g-5"></span><span class="g g-6"></span><span class="g g-7"></span><span class="g g-8"></span>
+    <span class="g g-9"></span><span class="g g-10"></span><span class="g g-11"></span><span class="g g-12"></span>
+    <span class="g g-13"></span><span class="g g-14"></span><span class="g g-15"></span><span class="g g-16"></span>
+    <span class="g g-17"></span><span class="g g-18"></span><span class="g g-19"></span><span class="g g-20"></span>
+    <span class="g g-21"></span><span class="g g-22"></span><span class="g g-23"></span><span class="g g-24"></span>
+    <span class="g g-25"></span><span class="g g-26"></span><span class="g g-27"></span><span class="g g-28"></span>
+    <span class="g g-29"></span><span class="g g-30"></span><span class="g g-31"></span><span class="g g-32"></span>
+    <span class="g g-33"></span><span class="g g-34"></span><span class="g g-35"></span><span class="g g-36"></span>
+  </div>
+
+  <main id="main">
+    <header class="intro">
+      <h1 class="name">Interactive</h1>
+      <nav class="top" aria-label="Main">
+        <a href="/">Home</a>
+        <a href="/me.html">Me</a>
+        <a href="/beliefs.html">Beliefs</a>
+        <a href="/random-blogging.html">Blog</a>
+        <a href="/interactive.html" aria-current="page">Interactive</a>
+        <a href="/pics.html">Pics</a>
+      </nav>
+    </header>
+
+    <hr class="divider">
+
+    <p>This is the interactive companion to the post <a href="/rotate-cross-section.html">Do You Have the Keys to Rotate a 3D Cross Section?</a> Play around with the slicing to feel what I am talking about: take a shape, cut it with a flat one dimension lower, and watch what the smaller world actually sees. Start at 1D and climb all the way up to a tesseract.</p>
+
+    <section class="slicer">
+      <div class="kicker">cross-sections · the slicing principle</div>
+      <h2>Slicing a shape <span class="dimword">one dimension down</span></h2>
+      <p class="sub">An N-dimensional object cut by an (N−1)-dimensional flat gives a lower-dimensional cross-section. A round object only changes size. A faceted object changes its number of sides. Step up the dimensions and drive the slice yourself.</p>
+      <div class="tabs" id="tabs">
+        <div class="tab" data-m="1d">1D · point slices a segment</div>
+        <div class="tab" data-m="2d">2D · line slices a shape</div>
+        <div class="tab on" data-m="3d">3D · plane slices a solid</div>
+        <div class="tab" data-m="4d">4D · space slices a tesseract</div>
+      </div>
+
+      <div class="stage">
+        <div class="caption" id="caption"></div>
+        <div class="canvas-host">
+          <canvas id="cv"></canvas>
+          <div class="readout" id="readout"></div>
+        </div>
+        <div class="controls" id="controls"></div>
+      </div>
+      <div class="hint" id="hint"></div>
+    </section>
+
+    <hr class="divider">
+
+    <p><a href="/rotate-cross-section.html">← Back to the post</a></p>
+  </main>
+
+  <footer class="site-footer">
+    <p class="site-footer-links">
+      <a href="https://hanomi.ai">Hanomi</a><span class="sep">·</span>
+      <a href="https://s-hawk.com">S-Hawk</a><span class="sep">·</span>
+      <a href="https://www.linkedin.com/in/marco-mascolo/">LinkedIn</a><span class="sep">·</span>
+      <a href="https://x.com/_marco_masc">X</a><span class="sep">·</span>
+      <a href="/manifesto.html">Manifesto</a><span class="sep">·</span>
+      <a href="mailto:marco.mascolo.job@gmail.com">marco.mascolo.job@gmail.com</a>
+    </p>
+    <p class="site-footer-meta">
+      &copy; 2026 marco mascolo<span class="sep">·</span>MADE IN ITALY<span class="sep">·</span>BUILDING IN SAN FRANCISCO
+    </p>
+  </footer>
+
+<script>
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+let W=900, H=520, DPR=1;
+
+/* ---------- site palette (light theme) ---------- */
+const C = {
+  ink:'#111111', wire:'#9a9a9a', faint:'rgba(17,17,17,.12)',
+  grid:'#ededed', rule:'#e0e0e0', muted:'#666666', dim:'#bdbdbd',
+  acc:'#ff3a1f', accFill:'rgba(255,58,31,.16)', accLine:'rgba(255,58,31,.32)', accSoft:'rgba(255,58,31,.07)'
+};
+const MONO = "'SF Mono', Menlo, Consolas, monospace";
+
+function resize(){
+  const host = cv.parentElement;
+  const cssW = host.clientWidth;
+  const cssH = Math.round(cssW * 0.56);
+  DPR = Math.min(window.devicePixelRatio||1, 2);
+  cv.style.height = cssH+'px';
+  cv.width = cssW*DPR; cv.height = cssH*DPR;
+  W = cssW; H = cssH;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+window.addEventListener('resize', resize);
+
+const S = {
+  mode:'3d', playing:true, t:0,
+  d2:{shape:'circle', theta:0.35, rho:0.0},
+  d3:{shape:'cube', rx:0.62, ry:0.6, sz:0.0},
+  d4:{shape:'tesseract', a:0.0, b:0.0, dd:0.0, vrx:0.5, vry:0.7},
+  d1:{p:0.0}
+};
+
+/* ---------- geometry tables ---------- */
+const V3=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]];
+const E3=[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+
+const V4=[]; for(let i=0;i<16;i++)V4.push([(i&1)?1:-1,(i&2)?1:-1,(i&4)?1:-1,(i&8)?1:-1]);
+const E4=[]; for(let i=0;i<16;i++)for(let j=i+1;j<16;j++){const x=i^j; if(x&&((x&(x-1))===0))E4.push([i,j]);}
+const bits=[1,2,4,8];
+const F4=[];
+for(let p=0;p<4;p++)for(let q=p+1;q<4;q++){
+  const vary=[bits[p],bits[q]];
+  const others=bits.filter((_,k)=>k!==p&&k!==q);
+  for(let s=0;s<4;s++){
+    let base=0; if(s&1)base|=others[0]; if(s&2)base|=others[1];
+    F4.push([base, base|vary[0], base|vary[0]|vary[1], base|vary[1]]);
+  }
+}
+const CELLS=[]; // 8 cells: one coord fixed
+for(const b of bits){ CELLS.push({b,sign:0}); CELLS.push({b,sign:b}); }
+
+/* ---------- math ---------- */
+function rot3(v,rx,ry){
+  let[x,y,z]=v;
+  let y1=y*Math.cos(rx)-z*Math.sin(rx), z1=y*Math.sin(rx)+z*Math.cos(rx);
+  let x2=x*Math.cos(ry)+z1*Math.sin(ry), z2=-x*Math.sin(ry)+z1*Math.cos(ry);
+  return[x2,y1,z2];
+}
+function rot4(v,a,b){
+  let[x,y,z,w]=v;
+  let x1=x*Math.cos(a)-w*Math.sin(a), w1=x*Math.sin(a)+w*Math.cos(a);
+  let y1=y*Math.cos(b)-z*Math.sin(b), z1=y*Math.sin(b)+z*Math.cos(b);
+  return[x1,y1,z1,w1];
+}
+// view-rotate a 3D point then orthographic project
+function projV(p,vrx,vry,cx,cy,sc){
+  let[x,y,z]=p;
+  let x1=x*Math.cos(vry)+z*Math.sin(vry), z1=-x*Math.sin(vry)+z*Math.cos(vry);
+  let y2=y*Math.cos(vrx)-z1*Math.sin(vrx), z2=y*Math.sin(vrx)+z1*Math.cos(vrx);
+  return[cx+x1*sc, cy-y2*sc, z2];
+}
+// 4D point -> perspective to 3D -> view -> 2D
+function proj4(p,vrx,vry,cx,cy,sc){
+  const f=2.4/(3.4-p[3]);
+  return projV([p[0]*f,p[1]*f,p[2]*f],vrx,vry,cx,cy,sc);
+}
+
+/* ---------- drawing helpers ---------- */
+function line(a,b,col,w){ctx.strokeStyle=col;ctx.lineWidth=w||1;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}
+function dot(p,r,col){ctx.fillStyle=col;ctx.beginPath();ctx.arc(p[0],p[1],r,0,7);ctx.fill();}
+function clearBg(){ctx.clearRect(0,0,W,H);}
+
+/* ================= 1D ================= */
+function draw1d(){
+  clearBg();
+  const cx=W/2, cy=H/2, sc=Math.min(W,H)*0.30;
+  // the line (number line)
+  line([cx-sc*1.6,cy],[cx+sc*1.6,cy],C.grid,1);
+  // the 1D object: segment [-1,1]
+  ctx.strokeStyle=C.ink; ctx.lineWidth=7; ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(cx-sc,cy);ctx.lineTo(cx+sc,cy);ctx.stroke();
+  ctx.lineCap='butt';
+  // ticks
+  ctx.fillStyle=C.muted;ctx.font='11px '+MONO;ctx.textAlign='center';
+  ctx.fillText('−1',cx-sc,cy+26);ctx.fillText('+1',cx+sc,cy+26);ctx.fillText('0',cx,cy+26);
+  // the 0D slice (a point)
+  const p=S.d1.p, px=cx+p*sc*1.5;
+  const inside=Math.abs(p*1.5)<=1;
+  line([px,cy-70],[px,cy+70], inside?C.acc:C.dim,1.5);
+  dot([px,cy], inside?7:5, inside?C.acc:C.dim);
+  ctx.fillStyle = inside?C.acc:C.muted;
+  ctx.font='600 13px '+MONO;
+  ctx.fillText(inside?'INSIDE — a point exists here':'OUTSIDE — nothing here', cx, cy-92);
+  // observer panel
+  ctx.fillStyle=C.muted;ctx.font='11px '+MONO;ctx.textAlign='left';
+  ctx.fillText('what a 0-D observer perceives:', 24, H-46);
+  if(inside){dot([28,H-24],6,C.acc); ctx.fillStyle=C.ink;ctx.fillText('· a single point',40,H-20);}
+  else{ctx.fillStyle=C.muted;ctx.fillText('· empty',28,H-20);}
+}
+
+/* ================= 2D ================= */
+function draw2d(){
+  clearBg();
+  const cx=W*0.40, cy=H/2, sc=Math.min(W,H)*0.34;
+  const th=S.d2.theta, rho=S.d2.rho;
+  // axes
+  line([cx-sc*1.5,cy],[cx+sc*1.5,cy],C.grid,1);
+  line([cx,cy-sc*1.4],[cx,cy+sc*1.4],C.grid,1);
+  // object
+  ctx.strokeStyle=C.wire;ctx.lineWidth=1.5;
+  if(S.d2.shape==='circle'){
+    ctx.beginPath();ctx.arc(cx,cy,sc,0,7);ctx.stroke();
+  }else{
+    ctx.strokeRect(cx-sc,cy-sc,2*sc,2*sc);
+  }
+  // slice line: x cosθ + y sinθ = rho ; dir = (-sinθ, cosθ)
+  const dir=[-Math.sin(th),Math.cos(th)];
+  const P0=[rho*Math.cos(th), rho*Math.sin(th)];
+  // draw infinite-ish line
+  const big=2.2;
+  const la=[P0[0]-big*dir[0],P0[1]-big*dir[1]], lb=[P0[0]+big*dir[0],P0[1]+big*dir[1]];
+  line([cx+la[0]*sc,cy-la[1]*sc],[cx+lb[0]*sc,cy-lb[1]*sc],C.dim,1);
+  // chord
+  let seg=null, len=0;
+  if(S.d2.shape==='circle'){
+    const k=1-rho*rho;
+    if(k>0){const t=Math.sqrt(k);
+      seg=[[P0[0]-t*dir[0],P0[1]-t*dir[1]],[P0[0]+t*dir[0],P0[1]+t*dir[1]]];
+      len=2*t;}
+  }else{
+    // clip param to box [-1,1]^2
+    let tmin=-big,tmax=big;
+    for(let ax=0;ax<2;ax++){
+      const o=P0[ax], d=dir[ax];
+      if(Math.abs(d)<1e-9){ if(o< -1||o>1){tmin=1;tmax=-1;} }
+      else{ let t1=(-1-o)/d, t2=(1-o)/d; if(t1>t2){const s=t1;t1=t2;t2=s;}
+        tmin=Math.max(tmin,t1); tmax=Math.min(tmax,t2); }
+    }
+    if(tmax>tmin){seg=[[P0[0]+tmin*dir[0],P0[1]+tmin*dir[1]],[P0[0]+tmax*dir[0],P0[1]+tmax*dir[1]]]; len=tmax-tmin;}
+  }
+  if(seg){
+    const A=[cx+seg[0][0]*sc,cy-seg[0][1]*sc], B=[cx+seg[1][0]*sc,cy-seg[1][1]*sc];
+    line(A,B,C.acc,5); dot(A,4,C.acc); dot(B,4,C.acc);
+  }
+  // 1D observer strip on the right
+  const ox=W*0.84, oy0=cy-sc, oy1=cy+sc;
+  line([ox,oy0],[ox,oy1],C.rule,1);
+  ctx.fillStyle=C.muted;ctx.font='10px '+MONO;ctx.textAlign='center';
+  ctx.fillText('1-D view',ox,oy0-12);
+  if(seg){
+    const half=len/2*sc;
+    ctx.strokeStyle=C.acc;ctx.lineWidth=6;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(ox,cy-half);ctx.lineTo(ox,cy+half);ctx.stroke();ctx.lineCap='butt';
+  }
+  setReadout([
+    ['shape', S.d2.shape],
+    ['slice length', seg?len.toFixed(3):'0.000'],
+    ['cross-section', 'a segment (always)']
+  ]);
+}
+
+/* ================= 3D ================= */
+function draw3d(){
+  clearBg();
+  const cx=W*0.40, cy=H*0.52, sc=Math.min(W,H)*0.28;
+  const vrx=0.45, vry=0.7;          // fixed 3/4 view
+  const rx=S.d3.rx, ry=S.d3.ry, zc=S.d3.sz;
+  // rotate the object's vertices (object spin = morphing driver)
+  const RV = V3.map(v=>rot3(v,rx,ry));
+  // slicing plane z = zc : draw as translucent quad
+  const corners=[[-1.5,-1.5,zc],[1.5,-1.5,zc],[1.5,1.5,zc],[-1.5,1.5,zc]].map(p=>projV(p,vrx,vry,cx,cy,sc));
+  ctx.fillStyle=C.accSoft;ctx.strokeStyle=C.accLine;ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(corners[0][0],corners[0][1]);for(let i=1;i<4;i++)ctx.lineTo(corners[i][0],corners[i][1]);ctx.closePath();ctx.fill();ctx.stroke();
+  // object wireframe (depth-shaded)
+  let pts, edges, cross=null, sides=0;
+  if(S.d3.shape==='cube'){
+    pts=RV.map(p=>projV(p,vrx,vry,cx,cy,sc));
+    edges=E3;
+    // cross-section points
+    const cs=[];
+    for(const[a,b]of E3){
+      const za=RV[a][2],zb=RV[b][2];
+      if((za-zc)*(zb-zc)<0){
+        const t=(zc-za)/(zb-za);
+        cs.push([RV[a][0]+t*(RV[b][0]-RV[a][0]), RV[a][1]+t*(RV[b][1]-RV[a][1]), zc]);
+      }
+    }
+    if(cs.length>2){
+      const mx=cs.reduce((s,p)=>s+p[0],0)/cs.length, my=cs.reduce((s,p)=>s+p[1],0)/cs.length;
+      cs.sort((p,q)=>Math.atan2(p[1]-my,p[0]-mx)-Math.atan2(q[1]-my,q[0]-mx));
+    }
+    cross=cs; sides=cs.length;
+    for(const[a,b]of edges) line(pts[a],pts[b],C.wire,1.2);
+  }else{
+    // sphere
+    edges=null;
+    // faint sphere
+    ctx.strokeStyle=C.rule;ctx.lineWidth=1;
+    for(let k=0;k<3;k++){ctx.beginPath();
+      for(let i=0;i<=60;i++){const a=i/60*7; const e=projV([Math.cos(a),Math.sin(a)*Math.cos(k),Math.sin(a)*Math.sin(k)],vrx,vry,cx,cy,sc); i?ctx.lineTo(e[0],e[1]):ctx.moveTo(e[0],e[1]);}ctx.stroke();}
+    const k=1-zc*zc;
+    if(k>0){const r=Math.sqrt(k); const cs=[];
+      for(let i=0;i<=48;i++){const a=i/48*7; cs.push([r*Math.cos(a),r*Math.sin(a),zc]);}
+      cross=cs; sides=Infinity;}
+  }
+  // draw cross-section filled
+  if(cross&&cross.length){
+    const cp=cross.map(p=>projV(p,vrx,vry,cx,cy,sc));
+    ctx.fillStyle=C.accFill;ctx.strokeStyle=C.acc;ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(cp[0][0],cp[0][1]);for(let i=1;i<cp.length;i++)ctx.lineTo(cp[i][0],cp[i][1]);ctx.closePath();ctx.fill();ctx.stroke();
+    if(S.d3.shape==='cube')for(const q of cp)dot(q,3.5,C.acc);
+  }
+  // flat 2D observer inset (true plane coords x,y)
+  const bx=W*0.80, by=H*0.30, bs=Math.min(W,H)*0.16;
+  ctx.strokeStyle=C.rule;ctx.strokeRect(bx-bs,by-bs,2*bs,2*bs);
+  ctx.fillStyle=C.muted;ctx.font='10px '+MONO;ctx.textAlign='center';
+  ctx.fillText('2-D view',bx,by-bs-8);
+  if(cross&&cross.length){
+    const fp=cross.map(p=>[bx+p[0]*bs*0.62, by-p[1]*bs*0.62]);
+    ctx.fillStyle=C.accFill;ctx.strokeStyle=C.acc;ctx.lineWidth=1.6;
+    ctx.beginPath();ctx.moveTo(fp[0][0],fp[0][1]);for(let i=1;i<fp.length;i++)ctx.lineTo(fp[i][0],fp[i][1]);ctx.closePath();ctx.fill();ctx.stroke();
+  }
+  setReadout([
+    ['shape', S.d3.shape],
+    ['slice height z', zc.toFixed(2)],
+    ['cross-section', S.d3.shape==='cube' ? (sides? sides+'-sided polygon':'— (outside)') : (Number.isFinite(sides)?'—':'a circle')]
+  ]);
+}
+
+/* ================= 4D ================= */
+function draw4d(){
+  clearBg();
+  const cx=W*0.50, cy=H*0.52, sc=Math.min(W,H)*0.30;
+  const a=S.d4.a, b=S.d4.b, dd=S.d4.dd, vrx=S.d4.vrx, vry=S.d4.vry;
+
+  // ----- 4D sphere (glome): slicing a 3-sphere with a hyperplane w = dd
+  //       gives a solid 3-D ball of radius sqrt(1 - dd^2). Like its lower
+  //       cousins, a round object only changes SIZE, never shape. -----
+  if(S.d4.shape==='sphere'){
+    const greatCircle=(rad,plane,w,col,lw)=>{
+      ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.beginPath();
+      for(let i=0;i<=72;i++){const ang=i/72*Math.PI*2; const u=rad*Math.cos(ang), v=rad*Math.sin(ang);
+        let P; if(plane===0)P=[u,v,0,w]; else if(plane===1)P=[u,0,v,w]; else P=[0,u,v,w];
+        const e=proj4(P,vrx,vry,cx,cy,sc); i?ctx.lineTo(e[0],e[1]):ctx.moveTo(e[0],e[1]);}
+      ctx.stroke();
+    };
+    // faint reference: the full hypersphere's widest slice (radius 1)
+    for(let g=0;g<3;g++) greatCircle(1,g,0,C.faint,1);
+    const k=1-dd*dd;
+    if(k>0){ const r=Math.sqrt(k); for(let g=0;g<3;g++) greatCircle(r,g,dd,C.acc,2); }
+    setReadout([
+      ['object','3-sphere (glome)'],
+      ['slice w', dd.toFixed(2)],
+      ['cross-section', k>0?('a solid ball · r='+Math.sqrt(k).toFixed(3)):'— (outside)'],
+      ['note','rotation never changes it, only size']
+    ]);
+    return;
+  }
+
+  const RV = V4.map(v=>rot4(v,a,b));
+  // faint tesseract wireframe
+  const tp = RV.map(p=>proj4(p,vrx,vry,cx,cy,sc));
+  ctx.lineWidth=1;
+  for(const[i,j]of E4){ ctx.strokeStyle=C.faint;
+    ctx.beginPath();ctx.moveTo(tp[i][0],tp[i][1]);ctx.lineTo(tp[j][0],tp[j][1]);ctx.stroke();}
+  // cross-section: hyperplane w = dd. For each 2-face collect crossing pts.
+  const vertsKey={}; const segs=[]; let vCount=0;
+  function crossOnEdge(i,j){
+    const wi=RV[i][3], wj=RV[j][3];
+    if((wi-dd)*(wj-dd)<0){
+      const tt=(dd-wi)/(wj-wi);
+      const key=i<j?i+'-'+j:j+'-'+i;
+      return {pt:[RV[i][0]+tt*(RV[j][0]-RV[i][0]),RV[i][1]+tt*(RV[j][1]-RV[i][1]),RV[i][2]+tt*(RV[j][2]-RV[i][2]),dd],key};
+    }
+    return null;
+  }
+  for(const f of F4){
+    const fe=[[f[0],f[1]],[f[1],f[2]],[f[2],f[3]],[f[3],f[0]]];
+    const hits=[];
+    for(const[i,j]of fe){const c=crossOnEdge(i,j); if(c)hits.push(c);}
+    if(hits.length===2){
+      segs.push([hits[0].pt,hits[1].pt]);
+      for(const h of hits) if(!(h.key in vertsKey)){vertsKey[h.key]=h.pt; vCount++;}
+    }
+  }
+  // faces = crossed cells
+  let fCount=0;
+  for(const c of CELLS){
+    let lo=false,hi=false;
+    for(let i=0;i<16;i++){ if((i&c.b)===c.sign){ if(RV[i][3]<dd)lo=true; else hi=true; } }
+    if(lo&&hi)fCount++;
+  }
+  // draw solid edges (depth sorted lightly)
+  const drawn = segs.map(s=>[proj4(s[0],vrx,vry,cx,cy,sc), proj4(s[1],vrx,vry,cx,cy,sc)]);
+  drawn.sort((u,v)=>((u[0][2]+u[1][2])-(v[0][2]+v[1][2])));
+  for(const[A,B]of drawn){
+    const depth=(A[2]+B[2])/2;
+    const al=0.5+0.5*Math.max(0,Math.min(1,(depth+1.5)/3));
+    ctx.strokeStyle='rgba(255,58,31,'+al.toFixed(2)+')'; ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();
+  }
+  for(const k in vertsKey){const q=proj4(vertsKey[k],vrx,vry,cx,cy,sc); dot(q,3.2,C.acc);}
+  const eCount=segs.length;
+  setReadout([
+    ['rotation','xw '+(a.toFixed(2))+'  ·  yz '+(b.toFixed(2))],
+    ['slice w', dd.toFixed(2)],
+    ['solid', fCount?(fCount+' faces · '+eCount+' edges · '+vCount+' verts'):'— (outside)'],
+    ['euler V−E+F', fCount?(vCount-eCount+fCount):'—']
+  ]);
+}
+
+/* ---------- readout ---------- */
+function setReadout(rows){
+  const el=document.getElementById('readout');
+  el.innerHTML = rows.map(r=>'<span class="lab">'+r[0]+'</span> <span class="v">'+r[1]+'</span>').join('<br>');
+}
+
+/* ---------- UI ---------- */
+const CAP={
+  '1d':'A <b>0-D point</b> sweeps a <b>1-D segment</b>. The observer only knows "something is here" or "nothing is here." This is the seed of the whole idea.',
+  '2d':'A <b>1-D line</b> cuts a <b>2-D shape</b>. The result is always a segment, so only its <b>length</b> changes. Switch between circle and square, translate and rotate the line.',
+  '3d':'A <b>2-D plane</b> cuts a <b>3-D solid</b>. Now shape can morph. The <b>sphere</b> stays a circle (size only). The <b>cube</b> walks through 3, 4, 5, 6 sides as it rotates — this is the case you were stuck on.',
+  '4d':'A <b>3-D space</b> cuts a <b>4-D solid</b>. The <b>tesseract</b> gives a cross-section that morphs as it rotates in two planes at once — watch faces appear and vanish while Euler V−E+F stays 2. Switch to the <b>sphere</b> (a glome) and, just like every round object below it, only its size changes — a solid ball that grows and shrinks. Rotation does nothing to it.'
+};
+const HINT={
+  '1d':'Drag the slider to move the slicing point through the segment.',
+  '2d':'<b>Translate</b> moves the line sideways · <b>Rotate</b> tilts it · the right strip is the 1-D observer’s whole world.',
+  '3d':'<b>Rotate cube</b> = the Minecraft scroll wheel · <b>Slice height</b> = moving the plane · the inset is the flat shadow a 2-D being would see.',
+  '4d':'<b>xw / yz</b> are the two independent rotation planes (a double rotation) · <b>Slice w</b> moves your 3-D space along the 4th axis · drag nothing, just play.'
+};
+
+function ctlRange(id,label,min,max,step,val){
+  return '<div class="ctl"><label>'+label+'<span class="n" id="'+id+'v">'+(+val).toFixed(2)+'</span></label>'+
+    '<input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'"></div>';
+}
+function seg(id,label,opts,cur){
+  return '<div class="ctl"><label>'+label+'</label><div class="seg" id="'+id+'">'+
+    opts.map(o=>'<button data-v="'+o+'" class="'+(o===cur?'on':'')+'">'+o+'</button>').join('')+'</div></div>';
+}
+function playCtl(){
+  return '<div class="ctl"><label>animation</label><button class="playbtn '+(S.playing?'on':'')+'" id="play">'+(S.playing?'❚❚  pause':'▶  play')+'</button></div>';
+}
+
+function buildControls(){
+  const c=document.getElementById('controls');
+  let html='';
+  if(S.mode==='1d'){
+    html=ctlRange('p1','slice position',-1.3,1.3,0.01,S.d1.p);
+  }else if(S.mode==='2d'){
+    html=seg('shape2','object',['circle','square'],S.d2.shape)
+        +ctlRange('rho','translate',-1.2,1.2,0.01,S.d2.rho)
+        +ctlRange('th2','rotate',-1.57,1.57,0.01,S.d2.theta)
+        +playCtl();
+  }else if(S.mode==='3d'){
+    html=seg('shape3','object',['cube','sphere'],S.d3.shape)
+        +ctlRange('ry3','rotate cube',-3.14,3.14,0.01,S.d3.ry)
+        +ctlRange('rx3','tilt cube',-1.2,1.2,0.01,S.d3.rx)
+        +ctlRange('sz3','slice height',-1.2,1.2,0.01,S.d3.sz)
+        +playCtl();
+  }else{
+    html=seg('shape4','object',['tesseract','sphere'],S.d4.shape)
+        +ctlRange('a4','rotate xw',-3.14,3.14,0.01,S.d4.a)
+        +ctlRange('b4','rotate yz',-3.14,3.14,0.01,S.d4.b)
+        +ctlRange('dd4','slice w',-1.4,1.4,0.01,S.d4.dd)
+        +ctlRange('vry4','view spin',-3.14,3.14,0.01,S.d4.vry)
+        +playCtl();
+  }
+  c.innerHTML=html;
+  document.getElementById('caption').innerHTML=CAP[S.mode];
+  document.getElementById('hint').innerHTML=HINT[S.mode];
+  wireControls();
+}
+function wireControls(){
+  const bind=(id,fn)=>{const e=document.getElementById(id); if(e)e.addEventListener('input',ev=>{fn(parseFloat(ev.target.value)); const lab=document.getElementById(id+'v'); if(lab)lab.textContent=parseFloat(ev.target.value).toFixed(2); S.playing=false; syncPlay();});};
+  bind('p1',v=>S.d1.p=v);
+  bind('rho',v=>S.d2.rho=v); bind('th2',v=>S.d2.theta=v);
+  bind('ry3',v=>S.d3.ry=v); bind('rx3',v=>S.d3.rx=v); bind('sz3',v=>S.d3.sz=v);
+  bind('a4',v=>S.d4.a=v); bind('b4',v=>S.d4.b=v); bind('dd4',v=>S.d4.dd=v); bind('vry4',v=>S.d4.vry=v);
+  const sh2=document.getElementById('shape2'); if(sh2)sh2.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.d2.shape=b.dataset.v;buildControls();});
+  const sh3=document.getElementById('shape3'); if(sh3)sh3.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.d3.shape=b.dataset.v;buildControls();});
+  const sh4=document.getElementById('shape4'); if(sh4)sh4.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.d4.shape=b.dataset.v;buildControls();});
+  const pb=document.getElementById('play'); if(pb)pb.onclick=()=>{S.playing=!S.playing; syncPlay();};
+}
+function syncPlay(){
+  const pb=document.getElementById('play');
+  if(pb){pb.className='playbtn '+(S.playing?'on':''); pb.innerHTML=S.playing?'❚❚  pause':'▶  play';}
+}
+function refreshSliders(){
+  const set=(id,val)=>{const e=document.getElementById(id),l=document.getElementById(id+'v'); if(e){e.value=val; if(l)l.textContent=(+val).toFixed(2);}};
+  if(S.mode==='2d'){set('rho',S.d2.rho);set('th2',S.d2.theta);}
+  if(S.mode==='3d'){set('ry3',S.d3.ry);set('rx3',S.d3.rx);set('sz3',S.d3.sz);}
+  if(S.mode==='4d'){set('a4',S.d4.a);set('b4',S.d4.b);set('dd4',S.d4.dd);set('vry4',S.d4.vry);}
+}
+
+document.getElementById('tabs').addEventListener('click',e=>{
+  const t=e.target.closest('.tab'); if(!t)return;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on'); S.mode=t.dataset.m; buildControls();
+});
+
+/* ---------- loop ---------- */
+function tick(){
+  if(S.playing){
+    S.t+=0.016;
+    if(S.mode==='2d'){S.d2.theta=Math.sin(S.t*0.5)*1.3; S.d2.rho=Math.sin(S.t*0.31)*0.85; refreshSliders();}
+    if(S.mode==='3d'){S.d3.ry=((S.t*0.6+3.14)%6.28)-3.14; S.d3.sz=Math.sin(S.t*0.4)*0.95; refreshSliders();}
+    if(S.mode==='4d'){S.d4.a=((S.t*0.5+3.14)%6.28)-3.14; S.d4.b=((S.t*0.33+3.14)%6.28)-3.14; S.d4.dd=Math.sin(S.t*0.22)*1.0; S.d4.vry=((S.t*0.18+3.14)%6.28)-3.14; refreshSliders();}
+  }
+  if(S.mode==='1d')draw1d();
+  else if(S.mode==='2d')draw2d();
+  else if(S.mode==='3d')draw3d();
+  else draw4d();
+  requestAnimationFrame(tick);
+}
+
+resize(); buildControls(); tick();
+</script>
+</body>
+</html>

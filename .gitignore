@@ -9,3 +9,4 @@ node_modules/
 # Local-only (not part of the published site)
 assets/_unused/
 assets/backups/
+.gstack/
