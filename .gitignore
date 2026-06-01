@@ -10,3 +10,7 @@ node_modules/
 assets/_unused/
 assets/backups/
 .gstack/
+
+# Private working notes — NOT for publication / not pushed
+weird-hp/
+ORIGIN.md
