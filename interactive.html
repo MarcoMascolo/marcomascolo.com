@@ -7,89 +7,70 @@
   <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Interactive · Marco Mascolo</title>
-  <meta name="description" content="Play with the slicing. An interactive companion to the cross-section post: cut a shape with a flat one dimension lower and watch what the smaller world sees. 1D up to a tesseract.">
+  <meta name="description" content="Interactive companions to the 4+D series: slice shapes from 1D to a tesseract, or watch two observers and their sweeping now-slices in a static block.">
   <link rel="canonical" href="https://marcomascolo.com/interactive.html">
   <meta property="og:title" content="Interactive · Marco Mascolo">
-  <meta property="og:description" content="Play with the slicing principle, 1D up to 4D.">
+  <meta property="og:description" content="Play with the slicing, and with two observers in one static block.">
   <meta property="og:image" content="/assets/banner.jpg?v=3">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <script>/* CYCLE DISABLED — to re-enable: move /assets/_unused/banners/banner-{1,3,4,5}.webp back to /assets/, then uncomment the IIFE below. (function(){var n=Math.floor(Math.random()*5)+1;document.documentElement.style.setProperty("--banner-url","url(/assets/banner-"+n+".webp)");})(); */</script>
+  <script>/* CYCLE DISABLED */</script>
   <link rel="stylesheet" href="/style.css?v=9">
   <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-192.png">
   <style>
-    /* ── interactive slicer widget, scoped to match the site (white / serif / orange) ── */
-    .slicer { margin: 2rem 0 0; }
-    .slicer .kicker {
-      font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem;
-    }
+    /* shared widget styles (both demos) */
+    .slicer { margin: 0; }
+    .slicer .kicker { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
     .slicer h2 { margin: 0 0 0.4rem; font-size: 1.4rem; }
     .slicer h2 .dimword { color: var(--muted); font-weight: normal; }
-    .slicer .sub { color: var(--muted); font-size: 1rem; margin: 0 0 1.25rem; max-width: 60ch; }
+    .slicer .sub { color: var(--muted); font-size: 1rem; margin: 0 0 1.1rem; max-width: 62ch; }
     .slicer .tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; margin: 0 0 1.1rem; }
-    .slicer .tab {
-      font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.02em;
-      background: #fff; border: 1px solid var(--rule); color: var(--muted);
-      padding: 0.5rem 0.8rem; border-radius: 2px; cursor: pointer; transition: 0.15s; user-select: none;
-    }
+    .slicer .tab { font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.02em; background: #fff; border: 1px solid var(--rule); color: var(--muted); padding: 0.5rem 0.8rem; border-radius: 2px; cursor: pointer; transition: 0.15s; user-select: none; }
     .slicer .tab:hover { border-color: #bbb; color: #111; }
     .slicer .tab.on { border-color: var(--orange); color: var(--orange); }
     .slicer .stage { background: #fff; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
-    .slicer .caption {
-      padding: 0.85rem 1rem; border-bottom: 1px solid var(--rule);
-      font-family: var(--serif); font-size: 0.95rem; color: var(--muted);
-    }
+    .slicer .caption { padding: 0.85rem 1rem; border-bottom: 1px solid var(--rule); font-family: var(--serif); font-size: 0.95rem; color: var(--muted); }
     .slicer .caption b { color: #111; font-weight: bold; }
     .slicer .canvas-host { position: relative; width: 100%; background: #fff; }
     .slicer canvas { display: block; width: 100%; height: auto; }
-    .slicer .readout {
-      position: absolute; top: 10px; left: 12px; font-family: var(--mono); font-size: 0.7rem;
-      color: var(--muted); background: rgba(255,255,255,0.82); border: 1px solid var(--rule);
-      border-radius: 2px; padding: 0.5rem 0.7rem; backdrop-filter: blur(2px); line-height: 1.75;
-    }
+    .slicer .readout { position: absolute; top: 10px; left: 12px; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); background: rgba(255,255,255,0.85); border: 1px solid var(--rule); border-radius: 2px; padding: 0.5rem 0.7rem; backdrop-filter: blur(2px); line-height: 1.8; }
     .slicer .readout .v { color: #111; font-weight: 600; }
-    .slicer .readout .lab { color: #aaa; }
-    .slicer .controls {
-      padding: 1rem; display: grid; gap: 1rem;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      align-items: end; border-top: 1px solid var(--rule);
-    }
-    .slicer .ctl label {
-      display: block; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem;
-    }
+    .slicer .readout .lab { color: #999; }
+    .slicer .readout .ra { color: #ff3a1f; font-weight:600; }
+    .slicer .readout .rb { color: #2456c8; font-weight:600; }
+    .slicer .controls { padding: 1rem; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); align-items: end; border-top: 1px solid var(--rule); }
+    .slicer .ctl label { display: block; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
     .slicer .ctl label .n { color: var(--orange); float: right; text-transform: none; letter-spacing: 0; }
-    .slicer input[type=range] {
-      -webkit-appearance: none; appearance: none; width: 100%; height: 3px;
-      border-radius: 3px; background: var(--rule); outline: none;
-    }
-    .slicer input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
-      background: var(--orange); cursor: pointer; border: 2px solid #fff; box-shadow: 0 0 0 1px var(--rule);
-    }
-    .slicer input[type=range]::-moz-range-thumb {
-      width: 14px; height: 14px; border-radius: 50%; background: var(--orange);
-      cursor: pointer; border: 2px solid #fff;
-    }
+    .slicer input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 3px; border-radius: 3px; background: var(--rule); outline: none; }
+    .slicer input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--orange); cursor: pointer; border: 2px solid #fff; box-shadow: 0 0 0 1px var(--rule); }
+    .slicer input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--orange); cursor: pointer; border: 2px solid #fff; }
+    .slicer input.ra::-webkit-slider-thumb { background:#ff3a1f; } .slicer input.rb::-webkit-slider-thumb { background:#2456c8; }
+    .slicer input.ra::-moz-range-thumb { background:#ff3a1f; } .slicer input.rb::-moz-range-thumb { background:#2456c8; }
     .slicer .seg { display: flex; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; width: max-content; }
-    .slicer .seg button {
-      font-family: var(--mono); font-size: 0.78rem; background: #fff; color: var(--muted);
-      border: none; padding: 0.5rem 0.85rem; cursor: pointer; transition: 0.12s;
-    }
+    .slicer .seg button { font-family: var(--mono); font-size: 0.78rem; background: #fff; color: var(--muted); border: none; padding: 0.5rem 0.85rem; cursor: pointer; transition: 0.12s; }
     .slicer .seg button.on { background: var(--orange); color: #fff; font-weight: 600; }
-    .slicer .playbtn {
-      font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.03em; background: #fff;
-      border: 1px solid var(--rule); color: #111; padding: 0.55rem 0.9rem; border-radius: 2px;
-      cursor: pointer; width: max-content;
-    }
+    .slicer .playbtn { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.03em; background: #fff; border: 1px solid var(--rule); color: #111; padding: 0.55rem 0.9rem; border-radius: 2px; cursor: pointer; width: max-content; }
     .slicer .playbtn:hover { border-color: var(--orange); }
     .slicer .playbtn.on { color: var(--orange); border-color: var(--orange); }
     .slicer .hint { margin-top: 1rem; font-family: var(--mono); font-size: 0.78rem; color: #999; line-height: 1.7; }
     .slicer .hint b { color: #111; font-weight: 600; }
+    .slicer .legend { display:flex; gap:1.2rem; flex-wrap:wrap; margin:0.6rem 0 0; font-family:var(--mono); font-size:0.74rem; color:var(--muted); }
+    .a { color:#ff3a1f; } .b { color:#2456c8; }
+    /* toggle between demos */
+    .demo-toggle { display:flex; gap:.5rem; flex-wrap:wrap; margin:0 0 .6rem; }
+    .demo-tab { font-family:var(--mono); font-size:.85rem; background:#fff; border:1px solid var(--rule); color:var(--muted); padding:.55rem 1rem; border-radius:2px; cursor:pointer; transition:.15s; }
+    .demo-tab:hover { border-color:#bbb; color:#111; }
+    .demo-tab.on { border-color:var(--orange); color:var(--orange); font-weight:600; }
+    .demo-link { font-size:.95rem; color:var(--muted); margin:0 0 1.5rem; }
+    /* observers (spacetime block) demo uses a dark canvas + dark readout */
+    #demo-observers .canvas-host { background:#6f9bd8; }
+    #demo-observers .readout { color:#eef; background:rgba(20,28,48,.62); border-color:rgba(255,255,255,.25); }
+    #demo-observers .readout .lab { color:#b9c2dd; }
+    #demo-observers .readout .v { color:#fff; }
+    #demo-observers .readout .ra { color:#ff6a52; }
+    #demo-observers .readout .rb { color:#79b0ff; }
   </style>
 </head>
 <body>
@@ -105,6 +86,7 @@
     <span class="g g-25"></span><span class="g g-26"></span><span class="g g-27"></span><span class="g g-28"></span>
     <span class="g g-29"></span><span class="g g-30"></span><span class="g g-31"></span><span class="g g-32"></span>
     <span class="g g-33"></span><span class="g g-34"></span><span class="g g-35"></span><span class="g g-36"></span>
+    
   </div>
 
   <main id="main">
@@ -122,35 +104,52 @@
 
     <hr class="divider">
 
-    <p>This is the interactive companion to the post <a href="/rotate-cross-section.html">Do You Have the Keys to Rotate a 3D Cross Section?</a> Play around with the slicing to feel what I am talking about: take a shape, cut it with a flat one dimension lower, and watch what the smaller world actually sees. Start at 1D and climb all the way up to a tesseract.</p>
+    <p>Toys for the <a href="/random-blogging.html">4+D series</a>. Pick one. Each is built to be played with, and each links to the post it belongs to.</p>
 
-    <p>There is a second demo too, the companion to <a href="/slicing-the-static-universe.html">part three</a>: <a href="/interactive-observers.html">two observers, two slices, one static block</a>.</p>
+    <div class="demo-toggle" id="demo-toggle">
+      <button class="demo-tab on" data-demo="slicing">Slicing 1D &rarr; 4D</button>
+      <button class="demo-tab" data-demo="observers">Two observers, two slices</button>
+    </div>
+    <p class="demo-link" id="demo-link"></p>
 
-    <section class="slicer">
+    <section class="slicer demo-panel" id="demo-slicing">
       <div class="kicker">cross-sections · the slicing principle</div>
       <h2>Slicing a shape <span class="dimword">one dimension down</span></h2>
       <p class="sub">An N-dimensional object cut by an (N−1)-dimensional flat gives a lower-dimensional cross-section. A round object only changes size. A faceted object changes its number of sides. Step up the dimensions and drive the slice yourself.</p>
-      <div class="tabs" id="tabs">
+      <div class="tabs" id="s-tabs">
         <div class="tab" data-m="1d">1D · point slices a segment</div>
         <div class="tab" data-m="2d">2D · line slices a shape</div>
         <div class="tab on" data-m="3d">3D · plane slices a solid</div>
         <div class="tab" data-m="4d">4D · space slices a tesseract</div>
       </div>
-
       <div class="stage">
-        <div class="caption" id="caption"></div>
-        <div class="canvas-host">
-          <canvas id="cv"></canvas>
-          <div class="readout" id="readout"></div>
-        </div>
-        <div class="controls" id="controls"></div>
+        <div class="caption" id="s-caption"></div>
+        <div class="canvas-host"><canvas id="s-cv"></canvas><div class="readout" id="s-readout"></div></div>
+        <div class="controls" id="s-controls"></div>
       </div>
-      <div class="hint" id="hint"></div>
+      <div class="hint" id="s-hint"></div>
+    </section>
+
+    <section class="slicer demo-panel" id="demo-observers" style="display:none;">
+      <div class="kicker">a block of spacetime · velocity · time · gravity</div>
+      <h2>Two people, two nows, <span class="dimword">in one static block</span></h2>
+      <p class="sub">An illustration, not a literal simulation. The whole box is spacetime: floor is space, up is time, the pale walls are the light cone. Each person has a coloured slice, their now. Speed them up toward light speed, sweep time, and drop a mass in to bend the slices.</p>
+      <div class="legend">
+        <span class="a"><b>A</b> worldline and now-slice</span>
+        <span class="b"><b>B</b> worldline and now-slice</span>
+        <span>pale walls = light cone, dark block = a mass</span>
+      </div>
+      <div class="stage">
+        <div class="caption" id="o-caption"></div>
+        <div class="canvas-host"><canvas id="o-cv"></canvas><div class="readout" id="o-readout"></div></div>
+        <div class="controls" id="o-controls"></div>
+      </div>
+      <div class="hint" id="o-hint"></div>
     </section>
 
     <hr class="divider">
 
-    <p><a href="/rotate-cross-section.html">← Back to the post</a></p>
+    <p><a href="/random-blogging.html">← Back to the blog</a></p>
   </main>
 
   <footer class="site-footer">
@@ -168,7 +167,10 @@
   </footer>
 
 <script>
-const cv = document.getElementById('cv');
+(function(){
+let __visible=true;
+
+const cv = document.getElementById('s-cv');
 const ctx = cv.getContext('2d');
 let W=900, H=520, DPR=1;
 
@@ -270,7 +272,7 @@ function draw1d(){
   dot([px,cy], inside?7:5, inside?C.acc:C.dim);
   ctx.fillStyle = inside?C.acc:C.muted;
   ctx.font='600 13px '+MONO;
-  ctx.fillText(inside?'INSIDE — a point exists here':'OUTSIDE — nothing here', cx, cy-92);
+  ctx.fillText(inside?'INSIDE, a point exists here':'OUTSIDE, nothing here', cx, cy-92);
   // observer panel
   ctx.fillStyle=C.muted;ctx.font='11px '+MONO;ctx.textAlign='left';
   ctx.fillText('what a 0-D observer perceives:', 24, H-46);
@@ -404,7 +406,7 @@ function draw3d(){
   setReadout([
     ['shape', S.d3.shape],
     ['slice height z', zc.toFixed(2)],
-    ['cross-section', S.d3.shape==='cube' ? (sides>=3 ? sides+'-sided polygon' : sides===2 ? 'a segment (edge-on)' : sides===1 ? 'a point (corner)' : '— (outside)') : (Number.isFinite(sides)?'—':'a circle')]
+    ['cross-section', S.d3.shape==='cube' ? (sides>=3 ? sides+'-sided polygon' : sides===2 ? 'a segment (edge-on)' : sides===1 ? 'a point (corner)' : ',  (outside)') : (Number.isFinite(sides)?', ':'a circle')]
   ]);
 }
 
@@ -432,7 +434,7 @@ function draw4d(){
     setReadout([
       ['object','3-sphere (glome)'],
       ['slice w', dd.toFixed(2)],
-      ['cross-section', k>0?('a solid ball · r='+Math.sqrt(k).toFixed(3)):'— (outside)'],
+      ['cross-section', k>0?('a solid ball · r='+Math.sqrt(k).toFixed(3)):',  (outside)'],
       ['note','rotation never changes it, only size']
     ]);
     return;
@@ -485,14 +487,14 @@ function draw4d(){
   setReadout([
     ['rotation','xw '+(a.toFixed(2))+'  ·  yz '+(b.toFixed(2))],
     ['slice w', dd.toFixed(2)],
-    ['solid', fCount?(fCount+' faces · '+eCount+' edges · '+vCount+' verts'):'— (outside)'],
-    ['euler V−E+F', fCount?(vCount-eCount+fCount):'—']
+    ['solid', fCount?(fCount+' faces · '+eCount+' edges · '+vCount+' verts'):',  (outside)'],
+    ['euler V−E+F', fCount?(vCount-eCount+fCount):', ']
   ]);
 }
 
 /* ---------- readout ---------- */
 function setReadout(rows){
-  const el=document.getElementById('readout');
+  const el=document.getElementById('s-readout');
   el.innerHTML = rows.map(r=>'<span class="lab">'+r[0]+'</span> <span class="v">'+r[1]+'</span>').join('<br>');
 }
 
@@ -500,8 +502,8 @@ function setReadout(rows){
 const CAP={
   '1d':'A <b>0-D point</b> sweeps a <b>1-D segment</b>. The observer only knows "something is here" or "nothing is here." This is the seed of the whole idea.',
   '2d':'A <b>1-D line</b> cuts a <b>2-D shape</b>. The result is <b>empty</b> if the line misses, <b>a point</b> if it just grazes the edge, and <b>a segment</b> if it cuts through. When it is a segment, only its <b>length</b> changes. Switch between circle and square, translate and rotate the line.',
-  '3d':'A <b>2-D plane</b> cuts a <b>3-D solid</b>. Now shape can morph. The <b>sphere</b> stays a circle (size only). The <b>cube</b> walks through 3, 4, 5, 6 sides as it rotates — this is the case you were stuck on.',
-  '4d':'A <b>3-D space</b> cuts a <b>4-D solid</b>. The <b>tesseract</b> gives a cross-section that morphs as it rotates in two planes at once — watch faces appear and vanish while Euler V−E+F stays 2. Switch to the <b>sphere</b> (a glome) and, just like every round object below it, only its size changes — a solid ball that grows and shrinks. Rotation does nothing to it.'
+  '3d':'A <b>2-D plane</b> cuts a <b>3-D solid</b>. Now shape can morph. The <b>sphere</b> stays a circle (size only). The <b>cube</b> walks through 3, 4, 5, 6 sides as it rotates, this is the case you were stuck on.',
+  '4d':'A <b>3-D space</b> cuts a <b>4-D solid</b>. The <b>tesseract</b> gives a cross-section that morphs as it rotates in two planes at once, watch faces appear and vanish while Euler V−E+F stays 2. Switch to the <b>sphere</b> (a glome) and, just like every round object below it, only its size changes, a solid ball that grows and shrinks. Rotation does nothing to it.'
 };
 const HINT={
   '1d':'Drag the slider to move the slicing point through the segment.',
@@ -519,11 +521,11 @@ function seg(id,label,opts,cur){
     opts.map(o=>'<button data-v="'+o+'" class="'+(o===cur?'on':'')+'">'+o+'</button>').join('')+'</div></div>';
 }
 function playCtl(){
-  return '<div class="ctl"><label>animation</label><button class="playbtn '+(S.playing?'on':'')+'" id="play">'+(S.playing?'❚❚  pause':'▶  play')+'</button></div>';
+  return '<div class="ctl"><label>animation</label><button class="playbtn '+(S.playing?'on':'')+'" id="s-play">'+(S.playing?'❚❚  pause':'▶  play')+'</button></div>';
 }
 
 function buildControls(){
-  const c=document.getElementById('controls');
+  const c=document.getElementById('s-controls');
   let html='';
   if(S.mode==='1d'){
     html=ctlRange('p1','slice position',-1.3,1.3,0.01,S.d1.p);
@@ -547,8 +549,8 @@ function buildControls(){
         +playCtl();
   }
   c.innerHTML=html;
-  document.getElementById('caption').innerHTML=CAP[S.mode];
-  document.getElementById('hint').innerHTML=HINT[S.mode];
+  document.getElementById('s-caption').innerHTML=CAP[S.mode];
+  document.getElementById('s-hint').innerHTML=HINT[S.mode];
   wireControls();
 }
 function wireControls(){
@@ -560,10 +562,10 @@ function wireControls(){
   const sh2=document.getElementById('shape2'); if(sh2)sh2.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.d2.shape=b.dataset.v;buildControls();});
   const sh3=document.getElementById('shape3'); if(sh3)sh3.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.d3.shape=b.dataset.v;buildControls();});
   const sh4=document.getElementById('shape4'); if(sh4)sh4.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.d4.shape=b.dataset.v;buildControls();});
-  const pb=document.getElementById('play'); if(pb)pb.onclick=()=>{S.playing=!S.playing; syncPlay();};
+  const pb=document.getElementById('s-play'); if(pb)pb.onclick=()=>{S.playing=!S.playing; syncPlay();};
 }
 function syncPlay(){
-  const pb=document.getElementById('play');
+  const pb=document.getElementById('s-play');
   if(pb){pb.className='playbtn '+(S.playing?'on':''); pb.innerHTML=S.playing?'❚❚  pause':'▶  play';}
 }
 function refreshSliders(){
@@ -573,14 +575,14 @@ function refreshSliders(){
   if(S.mode==='4d'){set('a4',S.d4.a);set('b4',S.d4.b);set('dd4',S.d4.dd);set('vry4',S.d4.vry);}
 }
 
-document.getElementById('tabs').addEventListener('click',e=>{
+document.getElementById('s-tabs').addEventListener('click',e=>{
   const t=e.target.closest('.tab'); if(!t)return;
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
   t.classList.add('on'); S.mode=t.dataset.m; buildControls();
 });
 
 /* ---------- loop ---------- */
-function tick(){
+function tick(){ if(!__visible){requestAnimationFrame(tick);return;}
   if(S.playing){
     S.t+=0.016;
     if(S.mode==='2d'){S.d2.theta=Math.sin(S.t*0.5)*1.3; S.d2.rho=Math.sin(S.t*0.31)*0.85; refreshSliders();}
@@ -595,6 +597,224 @@ function tick(){
 }
 
 resize(); buildControls(); tick();
+
+window.DEMO_slice={show:function(){__visible=true;resize();},hide:function(){__visible=false;}};
+})();
+(function(){
+let __visible=true;
+
+const cv = document.getElementById('o-cv');
+const ctx = cv.getContext('2d');
+let W=1000, H=600, DPR=1;
+
+const GX=12, GZ=5, GT=11;       // space, depth, time
+const XC = GX/2;                // light-cone origin (space center, t=0)
+const SKY='#6f9bd8';
+const COLA='#ff3a1f', COLB='#2456c8';
+
+const S = { vA:0.30, vB:-0.42, T:5.5, grav:0.0, xmass:2.4, playing:true, t:0, xA:3.0, xB:9.0 };
+
+function resize(){
+  const host = cv.parentElement;
+  const cssW = host.clientWidth;
+  const cssH = Math.round(cssW * 0.62);
+  DPR = Math.min(window.devicePixelRatio||1, 2);
+  cv.style.height = cssH+'px';
+  cv.width = cssW*DPR; cv.height = cssH*DPR;
+  W = cssW; H = cssH;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+window.addEventListener('resize', resize);
+
+let TW, TH, CH, OX, OY;
+function computeView(){
+  TW = Math.min(W/(GX+GZ)*0.92, H/(GX+GZ)*1.25);
+  TH = TW*0.5; CH = (H*0.80)/GT;
+  OX = W*0.46; OY = H*0.86;
+}
+function proj(x,t,z){ return [OX + (x - z - (GX-GZ)/2)*TW, OY + (x + z)*TH - t*CH]; }
+
+function poly(pts, fill, stroke, sw){
+  ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]);
+  for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]);
+  ctx.closePath();
+  if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+  if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=sw||1; ctx.stroke(); }
+}
+function line3(a,b,col,w,dash){ const p=proj(a[0],a[1],a[2]),q=proj(b[0],b[1],b[2]); ctx.strokeStyle=col;ctx.lineWidth=w||1;ctx.setLineDash(dash||[]);ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);ctx.stroke();ctx.setLineDash([]); }
+function clamp(v,a,b){ return v<a?a:v>b?b:v; }
+
+// gravity: clocks near the mass lag; a slice bends down (in time) near the mass,
+// MORE for the observer who sits nearer/slower in the well (research: not identical for both).
+function wellBump(x){ const d=x-S.xmass; return Math.exp(-(d*d)/(2*1.7*1.7)); }
+function sliceFn(xObsNow, v, T0){
+  const distToMass = Math.abs(xObsNow - S.xmass);
+  const proximity = 1/(1+0.45*distToMass);             // nearer observer -> stronger bend
+  return function(x){
+    const flat = T0 + v*(x - xObsNow);                 // tilted simultaneity, slope = v
+    const dip  = - S.grav * 3.6 * wellBump(x) * proximity;
+    return clamp(flat + dip, 0, GT);
+  };
+}
+
+// draw a slice surface t = fn(x), extruded across z, translucent
+function sliceSurface(fn, fill, edge){
+  const N=48;
+  for(let i=0;i<N;i++){
+    const x0=GX*i/N, x1=GX*(i+1)/N, t0=fn(x0), t1=fn(x1);
+    poly([proj(x0,t0,0),proj(x1,t1,0),proj(x1,t1,GZ),proj(x0,t0,GZ)], fill, null, 0);
+  }
+  // front edge line for definition
+  ctx.strokeStyle=edge; ctx.lineWidth=2; ctx.beginPath();
+  for(let i=0;i<=N;i++){ const x=GX*i/N; const p=proj(x,fn(x),0); i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); }
+  ctx.stroke();
+}
+
+function voxTop(x,z,col){ poly([proj(x,0,z),proj(x+1,0,z),proj(x+1,0,z+1),proj(x,0,z+1)], col, 'rgba(0,0,0,.12)',1); }
+
+function draw(){
+  computeView();
+  ctx.fillStyle=SKY; ctx.fillRect(0,0,W,H);
+
+  // ---- floor = space (a thin minecraft ground), drawn back-to-front ----
+  const cells=[];
+  for(let x=0;x<GX;x++) for(let z=0;z<GZ;z++) cells.push({x,z,k:x+z});
+  cells.sort((a,b)=>a.k-b.k);
+  for(const c of cells){
+    const nearMass = Math.abs((c.x+0.5)-S.xmass)<1.1 && S.grav>0.02;
+    // top face
+    let top = nearMass ? '#3a2f4a' : '#74b24a';
+    // side faces (1 block tall)
+    const cl = nearMass ? {t:'#3a2f4a',r:'#2c2338',f:'#221a2c'} : {t:'#74b24a',r:'#5f9a37',f:'#4d822b'};
+    poly([proj(c.x,-1,c.z+1),proj(c.x+1,-1,c.z+1),proj(c.x+1,0,c.z+1),proj(c.x,0,c.z+1)], '#7a5230', 'rgba(0,0,0,.1)',1);
+    poly([proj(c.x+1,-1,c.z),proj(c.x+1,0,c.z),proj(c.x+1,0,c.z+1),proj(c.x+1,-1,c.z+1)], '#6a4828', 'rgba(0,0,0,.1)',1);
+    voxTop(c.x,c.z, top);
+  }
+  // mass pillar (a dark monolith) at xmass
+  if(S.grav>0.02){
+    const mx=Math.round(S.xmass), mz=Math.floor(GZ/2), htop=Math.min(GT, 1.5+S.grav*3.5);
+    for(let zz=mz-1; zz<=mz; zz++){
+      poly([proj(mx,0,zz+1),proj(mx+1,0,zz+1),proj(mx+1,htop,zz+1),proj(mx,htop,zz+1)], '#241b30', 'rgba(0,0,0,.25)',1);
+      poly([proj(mx+1,0,zz),proj(mx+1,htop,zz),proj(mx+1,htop,zz+1),proj(mx+1,0,zz+1)], '#191322', 'rgba(0,0,0,.25)',1);
+      poly([proj(mx,htop,zz),proj(mx+1,htop,zz),proj(mx+1,htop,zz+1),proj(mx,htop,zz+1)], '#2e2440', 'rgba(0,0,0,.25)',1);
+    }
+  }
+
+  // ---- spacetime box wireframe (the static block) ----
+  const e='rgba(255,255,255,.35)';
+  for(const z of [0,GZ]){ line3([0,0,z],[GX,0,z],e,1); line3([0,GT,z],[GX,GT,z],e,1); line3([0,0,z],[0,GT,z],e,1); line3([GX,0,z],[GX,GT,z],e,1); }
+  line3([0,GT,0],[0,GT,GZ],e,1); line3([GX,GT,0],[GX,GT,GZ],e,1);
+
+  // ---- light cone from origin (XC,0): t = |x-XC| ----
+  const coneFill='rgba(255,255,255,.16)', coneEdge='rgba(255,255,255,.7)';
+  // left wall t=-(x-XC) for x<=XC ; right wall t=(x-XC) for x>=XC
+  poly([proj(XC,0,0),proj(0,GT> XC?XC:GT,0),proj(0,XC,GZ),proj(XC,0,GZ)], coneFill,null,0);
+  poly([proj(XC,0,0),proj(GX,GX-XC,0),proj(GX,GX-XC,GZ),proj(XC,0,GZ)], coneFill,null,0);
+  line3([XC,0,0],[0,XC,0],coneEdge,1.5,[5,4]); line3([XC,0,0],[GX,GX-XC,0],coneEdge,1.5,[5,4]);
+  ctx.fillStyle='rgba(255,255,255,.8)'; ctx.font='10px "SF Mono",Menlo,monospace'; ctx.textAlign='left';
+  const lp=proj(0.3,XC-0.4,0); ctx.fillText('light', lp[0], lp[1]);
+
+  // ---- observers ----
+  const xAnow = clamp(S.xA + S.vA*S.T, 0, GX), xBnow = clamp(S.xB + S.vB*S.T, 0, GX);
+  // worldlines (straight, slope = v): from (xstart,0) to (xstart+v*GT, GT)
+  function worldline(x0,v,col){
+    ctx.strokeStyle=col; ctx.lineWidth=3; ctx.beginPath();
+    for(let i=0;i<=GT*4;i++){ const t=GT*i/(GT*4); const x=clamp(x0+v*t,0,GX); const p=proj(x,t,GZ/2); i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); }
+    ctx.stroke();
+  }
+  worldline(S.xA,S.vA,COLA); worldline(S.xB,S.vB,COLB);
+
+  // slices (draw far one first for nicer overlap)
+  const fnA=sliceFn(xAnow,S.vA,S.T), fnB=sliceFn(xBnow,S.vB,S.T);
+  const order = (S.xA+S.vA*S.T) <= (S.xB+S.vB*S.T) ? [['A'],['B']] : [['B'],['A']];
+  function drawSlice(which){
+    if(which==='A') sliceSurface(fnA,'rgba(255,58,31,.22)',COLA);
+    else            sliceSurface(fnB,'rgba(36,86,200,.22)',COLB);
+  }
+  drawSlice(order[0][0]); drawSlice(order[1][0]);
+
+  // current-event markers + labels
+  function marker(xnow,T0,col,lab){ const p=proj(xnow,T0,GZ/2); ctx.fillStyle=col; ctx.beginPath(); ctx.arc(p[0],p[1],5,0,7); ctx.fill(); ctx.fillStyle='#fff'; ctx.font='700 12px "SF Mono",Menlo,monospace'; ctx.textAlign='center'; ctx.fillText(lab,p[0],p[1]-9); }
+  marker(xAnow,S.T,COLA,'A'); marker(xBnow,S.T,COLB,'B');
+
+  // axis labels
+  ctx.fillStyle='rgba(255,255,255,.85)'; ctx.font='11px "SF Mono",Menlo,monospace'; ctx.textAlign='left';
+  let ap=proj(GX*0.5,-0.0,GZ); ctx.fillText('space', ap[0]+8, ap[1]+18);
+  ctx.save(); let tp=proj(0,GT*0.5,0); ctx.translate(tp[0]-14,tp[1]); ctx.rotate(-Math.PI/2); ctx.fillText('time', 0,0); ctx.restore();
+
+  // ---- readout ----
+  const gA=1/Math.sqrt(Math.max(1e-4,1-S.vA*S.vA)), gB=1/Math.sqrt(Math.max(1e-4,1-S.vB*S.vB));
+  const tauA=S.T*Math.sqrt(Math.max(0,1-S.vA*S.vA)), tauB=S.T*Math.sqrt(Math.max(0,1-S.vB*S.vB));
+  const w=(S.vA-S.vB)/(1-S.vA*S.vB);
+  const fr=(x)=>(x>=0?'+':'')+x.toFixed(2);
+  const cliff=(v)=> Math.abs(v)>=0.9 ? ' <span class="v">clock nearly frozen</span>' : '';
+  let gravMsg;
+  if(S.grav<0.02) gravMsg='off (slices flat)';
+  else {
+    const dA=Math.abs(xAnow-S.xmass), dB=Math.abs(xBnow-S.xmass);
+    const near = dA<dB ? 'A' : 'B';
+    gravMsg='<span class="v">'+near+' is nearer the mass, so its slice bends MORE</span> (not the same for both)';
+  }
+  document.getElementById('o-readout').innerHTML = [
+    ['<span class="ra">A</span> velocity','<span class="v">'+fr(S.vA)+' c</span> · γ='+gA.toFixed(2)+' · clock '+tauA.toFixed(2)+cliff(S.vA)],
+    ['<span class="rb">B</span> velocity','<span class="v">'+fr(S.vB)+' c</span> · γ='+gB.toFixed(2)+' · clock '+tauB.toFixed(2)+cliff(S.vB)],
+    ['relative speed','<span class="v">'+fr(w)+' c</span>'],
+    ['gravity', gravMsg],
+    ['note','schematic analogy · simultaneity is observer-dependent · c=1']
+  ].map(r=>'<span class="lab">'+r[0]+'</span> '+r[1]).join('<br>');
+}
+
+/* ---------- UI ---------- */
+function ctlRange(id,label,min,max,step,val,cls){
+  return '<div class="ctl"><label>'+label+'<span class="n" id="'+id+'v">'+(+val).toFixed(2)+'</span></label>'+
+    '<input type="range" class="'+(cls||'')+'" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'"></div>';
+}
+function buildControls(){
+  document.getElementById('o-controls').innerHTML =
+      ctlRange('vA','speed of A (c)',-0.97,0.97,0.01,S.vA,'ra')
+    + ctlRange('vB','speed of B (c)',-0.97,0.97,0.01,S.vB,'rb')
+    + ctlRange('T','sweep time',0,GT,0.02,S.T)
+    + ctlRange('grav','gravity (bend slices)',0,1,0.01,S.grav)
+    + '<div class="ctl"><label>animation</label><button class="playbtn '+(S.playing?'on':'')+'" id="o-play">'+(S.playing?'❚❚  pause':'▶  play')+'</button></div>';
+  document.getElementById('o-caption').innerHTML = 'The block is all of spacetime at once: <b>floor = space</b>, <b>up = time</b>, <b>45 degree walls = light</b>. Each person is a worldline; their <b>now</b> is the coloured slice. <b>Speed</b> tilts a slice toward the light wall and freezes that person\'s clock as it nears light speed. <b>Gravity</b> drops a mass in and bends each slice toward it, and it bends the <b>nearer</b> person\'s slice more, never both the same.';
+  document.getElementById('o-hint').innerHTML = '<b>Speed A / B</b>: push toward &plusmn;1 and the slice scissors onto the 45 degree light wall while the clock freezes (a massive body can never quite reach it, and a photon has no now at all) &middot; <b>sweep time</b> moves both nows up the block &middot; <b>gravity</b>: the dark monolith is a mass; the closer, slower person\'s slice sags toward it more than the far one\'s. Illustration, not a literal GR solution.';
+  const bind=(id,fn,reset)=>{const e=document.getElementById(id); e.addEventListener('input',ev=>{fn(parseFloat(ev.target.value)); const l=document.getElementById(id+'v'); if(l)l.textContent=parseFloat(ev.target.value).toFixed(2); if(reset){S.playing=false; sync();}});};
+  bind('vA',v=>S.vA=v,true); bind('vB',v=>S.vB=v,true); bind('T',v=>S.T=v,false); bind('grav',v=>S.grav=v,true);
+  document.getElementById('o-play').onclick=()=>{S.playing=!S.playing; sync();};
+}
+function sync(){ const pb=document.getElementById('o-play'); if(pb){pb.className='playbtn '+(S.playing?'on':''); pb.innerHTML=S.playing?'❚❚  pause':'▶  play';} }
+function refreshT(){ const e=document.getElementById('T'),l=document.getElementById('Tv'); if(e){e.value=S.T; if(l)l.textContent=S.T.toFixed(2);} }
+
+function tick(){ if(!__visible){requestAnimationFrame(tick);return;}
+  if(S.playing){ S.t+=0.016; S.T = (Math.sin(S.t*0.3)*0.5+0.5)*GT; refreshT(); }
+  draw();
+  requestAnimationFrame(tick);
+}
+resize(); buildControls(); tick();
+
+window.DEMO_obs={show:function(){__visible=true;resize();},hide:function(){__visible=false;}};
+})();
+
+(function(){
+  var PANELS = {
+    slicing:  { el: document.getElementById('demo-slicing'),  api: function(){return window.DEMO_slice;}, link: 'Companion to the post <a href="/rotate-cross-section.html">Do You Have the Keys to Rotate a 3D Cross Section?</a>' },
+    observers:{ el: document.getElementById('demo-observers'), api: function(){return window.DEMO_obs;},   link: 'Companion to <a href="/slicing-the-static-universe.html">Slicing the Static Universe</a>, part three.' }
+  };
+  var linkEl = document.getElementById('demo-link');
+  function select(name){
+    Object.keys(PANELS).forEach(function(k){
+      var p = PANELS[k], on = (k===name);
+      p.el.style.display = on ? '' : 'none';
+      var api = p.api(); if(api){ on ? api.show() : api.hide(); }
+    });
+    document.querySelectorAll('#demo-toggle .demo-tab').forEach(function(b){ b.classList.toggle('on', b.dataset.demo===name); });
+    linkEl.innerHTML = PANELS[name].link;
+    if(location.hash.slice(1)!==name) history.replaceState(null,'','#'+name);
+  }
+  document.getElementById('demo-toggle').addEventListener('click', function(e){ var b=e.target.closest('.demo-tab'); if(b) select(b.dataset.demo); });
+  select(location.hash.slice(1)==='observers' ? 'observers' : 'slicing');
+})();
+
 </script>
 </body>
 </html>

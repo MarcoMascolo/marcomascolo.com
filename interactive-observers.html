@@ -6,11 +6,11 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Two Observers, Two Slices · Marco Mascolo</title>
-  <meta name="description" content="An interactive spacetime diagram: two people, each with their own sweeping now-slice, in one static block. When do they share a now, when do they meet, and what happens near light speed.">
+  <title>Two Observers in a Block · Marco Mascolo</title>
+  <meta name="description" content="A 3D block of spacetime with two observers. Tune each one's velocity up toward light speed, sweep time, and bend the slices with gravity. Their nows tilt, freeze at light speed, and bend differently near a mass.">
   <link rel="canonical" href="https://marcomascolo.com/interactive-observers.html">
-  <meta property="og:title" content="Two Observers, Two Slices">
-  <meta property="og:description" content="Two people, two sweeping slices, one static block.">
+  <meta property="og:title" content="Two Observers in a Block">
+  <meta property="og:description" content="Two observers, two slices, velocity, time, and gravity in one static block.">
   <meta property="og:image" content="/assets/banner.jpg?v=3">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
@@ -24,18 +24,18 @@
     .slicer .kicker { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
     .slicer h2 { margin: 0 0 0.4rem; font-size: 1.4rem; }
     .slicer h2 .dimword { color: var(--muted); font-weight: normal; }
-    .slicer .sub { color: var(--muted); font-size: 1rem; margin: 0 0 1.25rem; max-width: 62ch; }
+    .slicer .sub { color: var(--muted); font-size: 1rem; margin: 0 0 1.1rem; max-width: 62ch; }
     .slicer .stage { background: #fff; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
     .slicer .caption { padding: 0.85rem 1rem; border-bottom: 1px solid var(--rule); font-family: var(--serif); font-size: 0.95rem; color: var(--muted); }
     .slicer .caption b { color: #111; font-weight: bold; }
-    .slicer .canvas-host { position: relative; width: 100%; background: #fff; }
+    .slicer .canvas-host { position: relative; width: 100%; background: #6f9bd8; }
     .slicer canvas { display: block; width: 100%; height: auto; }
-    .slicer .readout { position: absolute; top: 10px; left: 12px; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); background: rgba(255,255,255,0.85); border: 1px solid var(--rule); border-radius: 2px; padding: 0.5rem 0.7rem; backdrop-filter: blur(2px); line-height: 1.8; }
-    .slicer .readout .v { color: #111; font-weight: 600; }
-    .slicer .readout .lab { color: #999; }
-    .slicer .readout .ra { color: #ff3a1f; font-weight:600; }
-    .slicer .readout .rb { color: #2456c8; font-weight:600; }
-    .slicer .controls { padding: 1rem; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); align-items: end; border-top: 1px solid var(--rule); }
+    .slicer .readout { position: absolute; top: 10px; left: 12px; font-family: var(--mono); font-size: 0.7rem; color: #eef; background: rgba(20,28,48,0.62); border: 1px solid rgba(255,255,255,.25); border-radius: 2px; padding: 0.5rem 0.7rem; backdrop-filter: blur(2px); line-height: 1.85; }
+    .slicer .readout .v { color: #fff; font-weight: 600; }
+    .slicer .readout .lab { color: #b9c2dd; }
+    .slicer .readout .ra { color: #ff6a52; font-weight:700; }
+    .slicer .readout .rb { color: #79b0ff; font-weight:700; }
+    .slicer .controls { padding: 1rem; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); align-items: end; border-top: 1px solid var(--rule); }
     .slicer .ctl label { display: block; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
     .slicer .ctl label .n { color: var(--orange); float: right; text-transform: none; letter-spacing: 0; }
     .slicer input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 3px; border-radius: 3px; background: var(--rule); outline: none; }
@@ -43,13 +43,11 @@
     .slicer input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--orange); cursor: pointer; border: 2px solid #fff; }
     .slicer input.ra::-webkit-slider-thumb { background:#ff3a1f; } .slicer input.rb::-webkit-slider-thumb { background:#2456c8; }
     .slicer input.ra::-moz-range-thumb { background:#ff3a1f; } .slicer input.rb::-moz-range-thumb { background:#2456c8; }
-    .slicer .playbtn { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.03em; background: #fff; border: 1px solid var(--rule); color: #111; padding: 0.55rem 0.9rem; border-radius: 2px; cursor: pointer; width: max-content; }
-    .slicer .playbtn:hover { border-color: var(--orange); }
+    .slicer .playbtn { font-family: var(--mono); font-size: 0.78rem; background: #fff; border: 1px solid var(--rule); color: #111; padding: 0.55rem 0.9rem; border-radius: 2px; cursor: pointer; width: max-content; }
     .slicer .playbtn.on { color: var(--orange); border-color: var(--orange); }
     .slicer .hint { margin-top: 1rem; font-family: var(--mono); font-size: 0.78rem; color: #999; line-height: 1.7; }
     .slicer .hint b { color: #111; font-weight: 600; }
-    .slicer .legend { display:flex; gap:1.2rem; flex-wrap:wrap; margin:0.6rem 0 0; font-family:var(--mono); font-size:0.74rem; color:var(--muted); }
-    .slicer .legend span b { font-weight:700; }
+    .slicer .legend { display:flex; gap:1.1rem; flex-wrap:wrap; margin:0.6rem 0 0; font-family:var(--mono); font-size:0.74rem; color:var(--muted); }
     .a { color:#ff3a1f; } .b { color:#2456c8; }
   </style>
 </head>
@@ -70,7 +68,7 @@
 
   <main id="main">
     <header class="intro">
-      <h1 class="name">Two Observers, Two Slices</h1>
+      <h1 class="name">Two Observers in a Block</h1>
       <nav class="top" aria-label="Main">
         <a href="/">Home</a>
         <a href="/me.html">Me</a>
@@ -83,24 +81,20 @@
 
     <hr class="divider">
 
-    <p>Companion to <a href="/slicing-the-static-universe.html">part three</a>. This is the honest, rigorous version of the "two people, two spinning cross sections" idea: a <strong>spacetime diagram</strong> with one space axis and one time axis. It is a 2D stand in for your real situation (a 3D slice of a 4D world), because a faithful 4D picture cannot be drawn. Everything here is real special relativity, just one dimension down. Other demos: <a href="/interactive.html">slicing 1D to 4D</a>.</p>
+    <p>Companion to <a href="/slicing-the-static-universe.html">part three</a>. The whole box is one static block of spacetime: the floor is space, up is time, and the pale diagonal walls are the light cone. Two people live in it, <span class="a">A</span> and <span class="b">B</span>. Each has a coloured slice, their "now." Speed them up toward light speed, sweep time, and drop a mass in to bend the slices. Watch how their nows tilt, freeze, and bend differently.</p>
 
     <section class="slicer">
-      <div class="kicker">special relativity · one space, one time</div>
-      <h2>When do two people <span class="dimword">share a now?</span></h2>
-      <p class="sub">The grey square is the static block: space runs across, time runs up, and the diagonal grey lines are the light cone (speed of light). Two people are two worldlines. Each carries a "now," a slice of simultaneity that tilts with their speed. Drive their speeds and sweep time, and watch when their nows line up, when they meet, and what happens near light speed.</p>
+      <div class="kicker">a block of spacetime · velocity · time · gravity</div>
+      <h2>Two people, two nows, <span class="dimword">in one static block</span></h2>
+      <p class="sub">This is an illustration, not a literal simulation. Space runs along the floor, time runs up, light moves at 45 degrees. A person's "now" is the coloured slice of events they call this instant. Tune it and watch.</p>
       <div class="legend">
-        <span class="a"><b>A</b> worldline (solid) and now (dashed)</span>
-        <span class="b"><b>B</b> worldline (solid) and now (dashed)</span>
-        <span>grey diagonals = light cone</span>
+        <span class="a"><b>A</b> worldline + now-slice</span>
+        <span class="b"><b>B</b> worldline + now-slice</span>
+        <span>pale walls = light cone · dark block = a mass</span>
       </div>
-
       <div class="stage">
         <div class="caption" id="caption"></div>
-        <div class="canvas-host">
-          <canvas id="cv"></canvas>
-          <div class="readout" id="readout"></div>
-        </div>
+        <div class="canvas-host"><canvas id="cv"></canvas><div class="readout" id="readout"></div></div>
         <div class="controls" id="controls"></div>
       </div>
       <div class="hint" id="hint"></div>
@@ -128,13 +122,14 @@
 <script>
 const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
-let W=900, H=560, DPR=1;
-const R = 5;                 // world half-extent (space and time units)
-const COLA = '#ff3a1f', COLB = '#2456c8';
-const INK='#111', MUT='#666', GRID='#ededed', RULE='#d8d8d8', CONE='#bdbdbd';
-const MONO = "'SF Mono', Menlo, Consolas, monospace";
+let W=1000, H=600, DPR=1;
 
-const S = { vA:0.35, vB:-0.5, T:-1.6, bend:0.0, playing:true, t:0, xA0:-1.8, xB0:1.8 };
+const GX=12, GZ=5, GT=11;       // space, depth, time
+const XC = GX/2;                // light-cone origin (space center, t=0)
+const SKY='#6f9bd8';
+const COLA='#ff3a1f', COLB='#2456c8';
+
+const S = { vA:0.30, vB:-0.42, T:5.5, grav:0.0, xmass:2.4, playing:true, t:0, xA:3.0, xB:9.0 };
 
 function resize(){
   const host = cv.parentElement;
@@ -148,117 +143,142 @@ function resize(){
 }
 window.addEventListener('resize', resize);
 
-let SC = 1, CX = 0, CY = 0;
-function computeView(){ CX = W/2; CY = H/2; SC = Math.min(W*0.46, H*0.46)/R; }
-function P(x,t){ return [CX + x*SC, CY - t*SC]; }    // world (x,t) -> screen
+let TW, TH, CH, OX, OY;
+function computeView(){
+  TW = Math.min(W/(GX+GZ)*0.92, H/(GX+GZ)*1.25);
+  TH = TW*0.5; CH = (H*0.80)/GT;
+  OX = W*0.46; OY = H*0.86;
+}
+function proj(x,t,z){ return [OX + (x - z - (GX-GZ)/2)*TW, OY + (x + z)*TH - t*CH]; }
 
-function line(a,b,col,w,dash){
-  ctx.strokeStyle=col; ctx.lineWidth=w||1; ctx.setLineDash(dash||[]);
-  ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); ctx.setLineDash([]);
+function poly(pts, fill, stroke, sw){
+  ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]);
+  for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]);
+  ctx.closePath();
+  if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+  if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=sw||1; ctx.stroke(); }
 }
-function dot(p,r,col){ ctx.fillStyle=col; ctx.beginPath(); ctx.arc(p[0],p[1],r,0,7); ctx.fill(); }
-function gamma(v){ return 1/Math.sqrt(Math.max(1e-6, 1 - v*v)); }
-function bendOffset(t){ return S.bend * 0.10 * (t*t - R*R/3); }   // gentle curvature (gravity, speculative)
+function line3(a,b,col,w,dash){ const p=proj(a[0],a[1],a[2]),q=proj(b[0],b[1],b[2]); ctx.strokeStyle=col;ctx.lineWidth=w||1;ctx.setLineDash(dash||[]);ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);ctx.stroke();ctx.setLineDash([]); }
+function clamp(v,a,b){ return v<a?a:v>b?b:v; }
 
-// draw a curve x(t) for t in [-R,R]
-function curveT(xfun, col, w, dash){
-  ctx.strokeStyle=col; ctx.lineWidth=w; ctx.setLineDash(dash||[]); ctx.beginPath();
-  let first=true;
-  for(let i=0;i<=120;i++){ const t=-R + (2*R)*i/120; const p=P(xfun(t)+bendOffset(t), t); if(first){ctx.moveTo(p[0],p[1]);first=false;} else ctx.lineTo(p[0],p[1]); }
-  ctx.stroke(); ctx.setLineDash([]);
-}
-// draw a now-line (simultaneity) t(x) for x in [-R,R]
-function curveX(tfun, col, w, dash){
-  ctx.strokeStyle=col; ctx.lineWidth=w; ctx.setLineDash(dash||[]); ctx.beginPath();
-  let first=true;
-  for(let i=0;i<=120;i++){ const x=-R + (2*R)*i/120; const tt=tfun(x); const p=P(x + bendOffset(tt), tt); if(first){ctx.moveTo(p[0],p[1]);first=false;} else ctx.lineTo(p[0],p[1]); }
-  ctx.stroke(); ctx.setLineDash([]);
+// gravity: clocks near the mass lag; a slice bends down (in time) near the mass,
+// MORE for the observer who sits nearer/slower in the well (research: not identical for both).
+function wellBump(x){ const d=x-S.xmass; return Math.exp(-(d*d)/(2*1.7*1.7)); }
+function sliceFn(xObsNow, v, T0){
+  const distToMass = Math.abs(xObsNow - S.xmass);
+  const proximity = 1/(1+0.45*distToMass);             // nearer observer -> stronger bend
+  return function(x){
+    const flat = T0 + v*(x - xObsNow);                 // tilted simultaneity, slope = v
+    const dip  = - S.grav * 3.6 * wellBump(x) * proximity;
+    return clamp(flat + dip, 0, GT);
+  };
 }
 
-function setReadout(rows){
-  document.getElementById('readout').innerHTML = rows.map(r=>'<span class="lab">'+r[0]+'</span> '+r[1]).join('<br>');
+// draw a slice surface t = fn(x), extruded across z, translucent
+function sliceSurface(fn, fill, edge){
+  const N=48;
+  for(let i=0;i<N;i++){
+    const x0=GX*i/N, x1=GX*(i+1)/N, t0=fn(x0), t1=fn(x1);
+    poly([proj(x0,t0,0),proj(x1,t1,0),proj(x1,t1,GZ),proj(x0,t0,GZ)], fill, null, 0);
+  }
+  // front edge line for definition
+  ctx.strokeStyle=edge; ctx.lineWidth=2; ctx.beginPath();
+  for(let i=0;i<=N;i++){ const x=GX*i/N; const p=proj(x,fn(x),0); i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); }
+  ctx.stroke();
 }
+
+function voxTop(x,z,col){ poly([proj(x,0,z),proj(x+1,0,z),proj(x+1,0,z+1),proj(x,0,z+1)], col, 'rgba(0,0,0,.12)',1); }
 
 function draw(){
   computeView();
-  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=SKY; ctx.fillRect(0,0,W,H);
 
-  // grid
-  ctx.strokeStyle=GRID; ctx.lineWidth=1;
-  for(let k=-R;k<=R;k++){ line(P(k,-R),P(k,R),GRID,1); line(P(-R,k),P(R,k),GRID,1); }
-  // axes
-  line(P(-R,0),P(R,0),RULE,1.2); line(P(0,-R),P(0,R),RULE,1.2);
-  ctx.fillStyle=MUT; ctx.font='11px '+MONO; ctx.textAlign='left';
-  ctx.fillText('space →', P(R*0.55,0)[0], P(0,0)[1]-6);
-  ctx.save(); const ty=P(0,R*0.6); ctx.translate(ty[0]+10, ty[1]); ctx.rotate(-Math.PI/2); ctx.fillText('time ↑', 0,0); ctx.restore();
-  // light cone through origin
-  line(P(-R,-R),P(R,R),CONE,1.4,[5,4]); line(P(-R,R),P(R,-R),CONE,1.4,[5,4]);
-  ctx.fillStyle=CONE; ctx.font='10px '+MONO; ctx.textAlign='left';
-  ctx.fillText('light', P(R*0.7,R*0.78)[0], P(0,R*0.82)[1]);
-
-  const gA=gamma(S.vA), gB=gamma(S.vB);
-  const xA = (t)=> S.xA0 + S.vA*t;
-  const xB = (t)=> S.xB0 + S.vB*t;
-  // current events at lab-time T
-  const EA = [xA(S.T), S.T], EB = [xB(S.T), S.T];
-  // now-lines: in observer frame, simultaneity has slope v: t = T + v (x - xE)
-  const nowA = (x)=> S.T + S.vA*(x - EA[0]);
-  const nowB = (x)=> S.T + S.vB*(x - EB[0]);
-
-  // worldlines
-  curveT(xA, COLA, 2.4);
-  curveT(xB, COLB, 2.4);
-  // now-lines (dashed)
-  curveX(nowA, COLA, 1.6, [6,4]);
-  curveX(nowB, COLB, 1.6, [6,4]);
-  // current-event dots
-  const pEA=P(EA[0]+bendOffset(EA[1]),EA[1]), pEB=P(EB[0]+bendOffset(EB[1]),EB[1]);
-  dot(pEA,5,COLA); dot(pEB,5,COLB);
-  ctx.fillStyle=COLA; ctx.font='600 12px '+MONO; ctx.textAlign='center'; ctx.fillText('A', pEA[0], pEA[1]-10);
-  ctx.fillStyle=COLB; ctx.fillText('B', pEB[0], pEB[1]-10);
-
-  // meeting event (worldlines cross)
-  let meetMsg, metWhen=null;
-  if(Math.abs(S.vA-S.vB) > 1e-4){
-    const tm = (S.xB0 - S.xA0)/(S.vA - S.vB); const xm = xA(tm); metWhen=tm;
-    if(Math.abs(tm)<=R && Math.abs(xm)<=R){
-      const pm=P(xm+bendOffset(tm),tm);
-      ctx.fillStyle='#111'; ctx.beginPath();
-      for(let i=0;i<10;i++){const a=i*Math.PI/5; const rr=i%2?3:7; ctx.lineTo(pm[0]+rr*Math.cos(a-Math.PI/2), pm[1]+rr*Math.sin(a-Math.PI/2));}
-      ctx.closePath(); ctx.fill();
-      ctx.font='10px '+MONO; ctx.textAlign='left'; ctx.fillText('they meet here', pm[0]+10, pm[1]-6);
-      meetMsg = (S.T < tm) ? 'yes, ahead of both of you (one shared event)' : 'yes, already happened (one shared event)';
-    } else meetMsg = 'their paths do not cross inside this window';
-  } else {
-    meetMsg = (Math.abs(S.xA0-S.xB0)<1e-6) ? 'same worldline' : 'parallel: they never meet (same speed, never cross)';
+  // ---- floor = space (a thin minecraft ground), drawn back-to-front ----
+  const cells=[];
+  for(let x=0;x<GX;x++) for(let z=0;z<GZ;z++) cells.push({x,z,k:x+z});
+  cells.sort((a,b)=>a.k-b.k);
+  for(const c of cells){
+    const nearMass = Math.abs((c.x+0.5)-S.xmass)<1.1 && S.grav>0.02;
+    // top face
+    let top = nearMass ? '#3a2f4a' : '#74b24a';
+    // side faces (1 block tall)
+    const cl = nearMass ? {t:'#3a2f4a',r:'#2c2338',f:'#221a2c'} : {t:'#74b24a',r:'#5f9a37',f:'#4d822b'};
+    poly([proj(c.x,-1,c.z+1),proj(c.x+1,-1,c.z+1),proj(c.x+1,0,c.z+1),proj(c.x,0,c.z+1)], '#7a5230', 'rgba(0,0,0,.1)',1);
+    poly([proj(c.x+1,-1,c.z),proj(c.x+1,0,c.z),proj(c.x+1,0,c.z+1),proj(c.x+1,-1,c.z+1)], '#6a4828', 'rgba(0,0,0,.1)',1);
+    voxTop(c.x,c.z, top);
+  }
+  // mass pillar (a dark monolith) at xmass
+  if(S.grav>0.02){
+    const mx=Math.round(S.xmass), mz=Math.floor(GZ/2), htop=Math.min(GT, 1.5+S.grav*3.5);
+    for(let zz=mz-1; zz<=mz; zz++){
+      poly([proj(mx,0,zz+1),proj(mx+1,0,zz+1),proj(mx+1,htop,zz+1),proj(mx,htop,zz+1)], '#241b30', 'rgba(0,0,0,.25)',1);
+      poly([proj(mx+1,0,zz),proj(mx+1,htop,zz),proj(mx+1,htop,zz+1),proj(mx+1,0,zz+1)], '#191322', 'rgba(0,0,0,.25)',1);
+      poly([proj(mx,htop,zz),proj(mx+1,htop,zz),proj(mx+1,htop,zz+1),proj(mx,htop,zz+1)], '#2e2440', 'rgba(0,0,0,.25)',1);
+    }
   }
 
-  // shared-now status
-  const parallelNow = Math.abs(S.vA - S.vB) < 0.02;
-  let shareMsg;
-  if(parallelNow){ shareMsg = 'YES, at rest relative to each other: same now, always'; }
+  // ---- spacetime box wireframe (the static block) ----
+  const e='rgba(255,255,255,.35)';
+  for(const z of [0,GZ]){ line3([0,0,z],[GX,0,z],e,1); line3([0,GT,z],[GX,GT,z],e,1); line3([0,0,z],[0,GT,z],e,1); line3([GX,0,z],[GX,GT,z],e,1); }
+  line3([0,GT,0],[0,GT,GZ],e,1); line3([GX,GT,0],[GX,GT,GZ],e,1);
+
+  // ---- light cone from origin (XC,0): t = |x-XC| ----
+  const coneFill='rgba(255,255,255,.16)', coneEdge='rgba(255,255,255,.7)';
+  // left wall t=-(x-XC) for x<=XC ; right wall t=(x-XC) for x>=XC
+  poly([proj(XC,0,0),proj(0,GT> XC?XC:GT,0),proj(0,XC,GZ),proj(XC,0,GZ)], coneFill,null,0);
+  poly([proj(XC,0,0),proj(GX,GX-XC,0),proj(GX,GX-XC,GZ),proj(XC,0,GZ)], coneFill,null,0);
+  line3([XC,0,0],[0,XC,0],coneEdge,1.5,[5,4]); line3([XC,0,0],[GX,GX-XC,0],coneEdge,1.5,[5,4]);
+  ctx.fillStyle='rgba(255,255,255,.8)'; ctx.font='10px "SF Mono",Menlo,monospace'; ctx.textAlign='left';
+  const lp=proj(0.3,XC-0.4,0); ctx.fillText('light', lp[0], lp[1]);
+
+  // ---- observers ----
+  const xAnow = clamp(S.xA + S.vA*S.T, 0, GX), xBnow = clamp(S.xB + S.vB*S.T, 0, GX);
+  // worldlines (straight, slope = v): from (xstart,0) to (xstart+v*GT, GT)
+  function worldline(x0,v,col){
+    ctx.strokeStyle=col; ctx.lineWidth=3; ctx.beginPath();
+    for(let i=0;i<=GT*4;i++){ const t=GT*i/(GT*4); const x=clamp(x0+v*t,0,GX); const p=proj(x,t,GZ/2); i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); }
+    ctx.stroke();
+  }
+  worldline(S.xA,S.vA,COLA); worldline(S.xB,S.vB,COLB);
+
+  // slices (draw far one first for nicer overlap)
+  const fnA=sliceFn(xAnow,S.vA,S.T), fnB=sliceFn(xBnow,S.vB,S.T);
+  const order = (S.xA+S.vA*S.T) <= (S.xB+S.vB*S.T) ? [['A'],['B']] : [['B'],['A']];
+  function drawSlice(which){
+    if(which==='A') sliceSurface(fnA,'rgba(255,58,31,.22)',COLA);
+    else            sliceSurface(fnB,'rgba(36,86,200,.22)',COLB);
+  }
+  drawSlice(order[0][0]); drawSlice(order[1][0]);
+
+  // current-event markers + labels
+  function marker(xnow,T0,col,lab){ const p=proj(xnow,T0,GZ/2); ctx.fillStyle=col; ctx.beginPath(); ctx.arc(p[0],p[1],5,0,7); ctx.fill(); ctx.fillStyle='#fff'; ctx.font='700 12px "SF Mono",Menlo,monospace'; ctx.textAlign='center'; ctx.fillText(lab,p[0],p[1]-9); }
+  marker(xAnow,S.T,COLA,'A'); marker(xBnow,S.T,COLB,'B');
+
+  // axis labels
+  ctx.fillStyle='rgba(255,255,255,.85)'; ctx.font='11px "SF Mono",Menlo,monospace'; ctx.textAlign='left';
+  let ap=proj(GX*0.5,-0.0,GZ); ctx.fillText('space', ap[0]+8, ap[1]+18);
+  ctx.save(); let tp=proj(0,GT*0.5,0); ctx.translate(tp[0]-14,tp[1]); ctx.rotate(-Math.PI/2); ctx.fillText('time', 0,0); ctx.restore();
+
+  // ---- readout ----
+  const gA=1/Math.sqrt(Math.max(1e-4,1-S.vA*S.vA)), gB=1/Math.sqrt(Math.max(1e-4,1-S.vB*S.vB));
+  const tauA=S.T*Math.sqrt(Math.max(0,1-S.vA*S.vA)), tauB=S.T*Math.sqrt(Math.max(0,1-S.vB*S.vB));
+  const w=(S.vA-S.vB)/(1-S.vA*S.vB);
+  const fr=(x)=>(x>=0?'+':'')+x.toFixed(2);
+  const cliff=(v)=> Math.abs(v)>=0.9 ? ' <span class="v">clock nearly frozen</span>' : '';
+  let gravMsg;
+  if(S.grav<0.02) gravMsg='off (slices flat)';
   else {
-    // the two now-lines cross at one event
-    const xc = (S.T*(1) - 0) ; // solve nowA(x)=nowB(x): vA(x-EA0) = vB(x-EB0)
-    const xstar = (S.vA*EA[0] - S.vB*EB[0])/(S.vA - S.vB);
-    const tstar = nowA(xstar);
-    if(Math.abs(xstar)<=R && Math.abs(tstar)<=R){ const ps=P(xstar+bendOffset(tstar),tstar); ctx.strokeStyle='#111'; ctx.lineWidth=1; line([ps[0]-5,ps[1]],[ps[0]+5,ps[1]],'#111',1); line([ps[0],ps[1]-5],[ps[0],ps[1]+5],'#111',1); }
-    shareMsg = 'no: your nows agree on only one event right now';
+    const dA=Math.abs(xAnow-S.xmass), dB=Math.abs(xBnow-S.xmass);
+    const near = dA<dB ? 'A' : 'B';
+    gravMsg='<span class="v">'+near+' is nearer the mass, so its slice bends MORE</span> (not the same for both)';
   }
-
-  // relativistic relative speed
-  const w = (S.vA - S.vB)/(1 - S.vA*S.vB);
-  const fr = (x)=> (x>=0?'+':'')+x.toFixed(2);
-  const tauA = (S.T)*Math.sqrt(Math.max(0,1-S.vA*S.vA));
-  const tauB = (S.T)*Math.sqrt(Math.max(0,1-S.vB*S.vB));
-
-  setReadout([
-    ['<span class="ra">A</span> speed', '<span class="v">'+fr(S.vA)+' c</span> &middot; γ='+gA.toFixed(2)+' &middot; clock '+tauA.toFixed(2)],
-    ['<span class="rb">B</span> speed', '<span class="v">'+fr(S.vB)+' c</span> &middot; γ='+gB.toFixed(2)+' &middot; clock '+tauB.toFixed(2)],
-    ['relative speed', '<span class="v">'+fr(w)+' c</span>'],
-    ['share a now?', '<span class="v">'+shareMsg+'</span>'],
-    ['do they meet?', '<span class="v">'+meetMsg+'</span>']
-  ]);
+  document.getElementById('readout').innerHTML = [
+    ['<span class="ra">A</span> velocity','<span class="v">'+fr(S.vA)+' c</span> · γ='+gA.toFixed(2)+' · clock '+tauA.toFixed(2)+cliff(S.vA)],
+    ['<span class="rb">B</span> velocity','<span class="v">'+fr(S.vB)+' c</span> · γ='+gB.toFixed(2)+' · clock '+tauB.toFixed(2)+cliff(S.vB)],
+    ['relative speed','<span class="v">'+fr(w)+' c</span>'],
+    ['gravity', gravMsg],
+    ['note','schematic analogy · simultaneity is observer-dependent · c=1']
+  ].map(r=>'<span class="lab">'+r[0]+'</span> '+r[1]).join('<br>');
 }
 
 /* ---------- UI ---------- */
@@ -267,38 +287,27 @@ function ctlRange(id,label,min,max,step,val,cls){
     '<input type="range" class="'+(cls||'')+'" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'"></div>';
 }
 function buildControls(){
-  const c=document.getElementById('controls');
-  c.innerHTML =
+  document.getElementById('controls').innerHTML =
       ctlRange('vA','speed of A (c)',-0.97,0.97,0.01,S.vA,'ra')
     + ctlRange('vB','speed of B (c)',-0.97,0.97,0.01,S.vB,'rb')
-    + ctlRange('T','sweep time',-R*0.95,R*0.95,0.01,S.T)
-    + ctlRange('bend','bend the slices (gravity)',0,1,0.01,S.bend)
+    + ctlRange('T','sweep time',0,GT,0.02,S.T)
+    + ctlRange('grav','gravity (bend slices)',0,1,0.01,S.grav)
     + '<div class="ctl"><label>animation</label><button class="playbtn '+(S.playing?'on':'')+'" id="play">'+(S.playing?'❚❚  pause':'▶  play')+'</button></div>';
-  document.getElementById('caption').innerHTML = CAP();
-  document.getElementById('hint').innerHTML = HINT();
-  wire();
+  document.getElementById('caption').innerHTML = 'The block is all of spacetime at once: <b>floor = space</b>, <b>up = time</b>, <b>45 degree walls = light</b>. Each person is a worldline; their <b>now</b> is the coloured slice. <b>Speed</b> tilts a slice toward the light wall and freezes that person\'s clock as it nears light speed. <b>Gravity</b> drops a mass in and bends each slice toward it, and it bends the <b>nearer</b> person\'s slice more, never both the same.';
+  document.getElementById('hint').innerHTML = '<b>Speed A / B</b>: push toward &plusmn;1 and the slice scissors onto the 45 degree light wall while the clock freezes (a massive body can never quite reach it, and a photon has no now at all) &middot; <b>sweep time</b> moves both nows up the block &middot; <b>gravity</b>: the dark monolith is a mass; the closer, slower person\'s slice sags toward it more than the far one\'s. Illustration, not a literal GR solution.';
+  const bind=(id,fn,reset)=>{const e=document.getElementById(id); e.addEventListener('input',ev=>{fn(parseFloat(ev.target.value)); const l=document.getElementById(id+'v'); if(l)l.textContent=parseFloat(ev.target.value).toFixed(2); if(reset){S.playing=false; sync();}});};
+  bind('vA',v=>S.vA=v,true); bind('vB',v=>S.vB=v,true); bind('T',v=>S.T=v,false); bind('grav',v=>S.grav=v,true);
+  document.getElementById('play').onclick=()=>{S.playing=!S.playing; sync();};
 }
-function CAP(){
-  return 'A <b>spacetime diagram</b>: space across, time up, light at 45 degrees. Each person is a <b>worldline</b>; their <b>now</b> is the dashed slice of events they call "this instant." Two people at the same speed share the same now <b>always</b> (their dashed lines coincide). Give them different speeds and the slices <b>tilt apart</b> (relativity of simultaneity), agreeing on only one event. Either way, <b>meeting</b> (the star) and <b>seeing</b> happen where the solid worldlines cross, no matter how either one slices time.';
-}
-function HINT(){
-  return '<b>Speed A / B</b> tilt each now-slice (this is the real "spin", a Lorentz boost, not a circular spin) &middot; <b>sweep time</b> moves both nows up the block &middot; push a speed toward &plusmn;1 and its <b>clock</b> freezes toward 0 (a photon, proper time zero) while its slice flattens onto the light cone &middot; <b>bend</b> curves the slices, a loose picture of gravity; bend hard and a slice folds, the speculative road to a closed timelike curve, which real physics almost certainly forbids.';
-}
-function wire(){
-  const bind=(id,fn)=>{const e=document.getElementById(id); if(e)e.addEventListener('input',ev=>{fn(parseFloat(ev.target.value)); const l=document.getElementById(id+'v'); if(l)l.textContent=parseFloat(ev.target.value).toFixed(2); if(id!=='T'){S.playing=false; syncPlay();}});};
-  bind('vA',v=>S.vA=v); bind('vB',v=>S.vB=v); bind('T',v=>S.T=v); bind('bend',v=>S.bend=v);
-  const pb=document.getElementById('play'); if(pb)pb.onclick=()=>{S.playing=!S.playing; syncPlay();};
-}
-function syncPlay(){ const pb=document.getElementById('play'); if(pb){ pb.className='playbtn '+(S.playing?'on':''); pb.innerHTML=S.playing?'❚❚  pause':'▶  play'; } }
-function refreshT(){ const e=document.getElementById('T'), l=document.getElementById('Tv'); if(e){ e.value=S.T; if(l)l.textContent=S.T.toFixed(2); } }
+function sync(){ const pb=document.getElementById('play'); if(pb){pb.className='playbtn '+(S.playing?'on':''); pb.innerHTML=S.playing?'❚❚  pause':'▶  play';} }
+function refreshT(){ const e=document.getElementById('T'),l=document.getElementById('Tv'); if(e){e.value=S.T; if(l)l.textContent=S.T.toFixed(2);} }
 
 function tick(){
-  if(S.playing){ S.t+=0.016; S.T = Math.sin(S.t*0.35)*R*0.9; refreshT(); }
+  if(S.playing){ S.t+=0.016; S.T = (Math.sin(S.t*0.3)*0.5+0.5)*GT; refreshT(); }
   draw();
   requestAnimationFrame(tick);
 }
-
-resize(); computeView(); buildControls(); tick();
+resize(); buildControls(); tick();
 </script>
 </body>
 </html>
