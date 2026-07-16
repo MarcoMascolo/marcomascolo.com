@@ -39,7 +39,7 @@
   // photo that produced black and white type. Instead push each channel away
   // from the cell's own mean, which is saturation, and where a cell has almost
   // no colour of its own, lend it one from a luminance ramp.
-  function inkColour(r, g, b, L, o) {
+  function inkColour(r, g, b, L, o, gainMul) {
     var mean = (r + g + b) / 3;
     var rr = mean + (r - mean) * o.satBoost;
     var gg = mean + (g - mean) * o.satBoost;
@@ -55,7 +55,8 @@
         rr += (c[0] - rr) * mix; gg += (c[1] - gg) * mix; bb += (c[2] - bb) * mix;
       }
     }
-    return 'rgb(' + clamp255(rr * o.gain) + ',' + clamp255(gg * o.gain) + ',' + clamp255(bb * o.gain) + ')';
+    var k = o.gain * (gainMul || 1);
+    return 'rgb(' + clamp255(rr * k) + ',' + clamp255(gg * k) + ',' + clamp255(bb * k) + ')';
   }
 
   function rankNorm(v) {
@@ -89,7 +90,7 @@
       // go: idleHold ms of stillness, then it fades out over idleFade.
       idleHold: 500, idleFade: 700,
       // How far the type is allowed to spill past the edge of the picture.
-      bleed: 16
+      bleed: 24
     }, opts || {});
     // Capped harder than the lab page: these run many at a time on a real page.
     this.dpr = Math.min(window.devicePixelRatio || 1, 1.25);
@@ -184,6 +185,7 @@
     var cb = Math.max(0, Math.ceil(B / cw));
     this.isBleed = new Uint8Array(cols * rows);
     this.leak = new Uint8Array(cols * rows);
+    this.bleedFade = new Float32Array(cols * rows);
     if (cb > 0 && cols - cb > cb && rows - cb > cb) {
       for (var by = 0; by < rows; by++) for (var bx = 0; bx < cols; bx++) {
         var ex = Math.min(cols - 1 - cb, Math.max(cb, bx));
@@ -233,14 +235,18 @@
         var i2 = ci * 4, r = d[i2], g = d[i2 + 1], b = d[i2 + 2];
         var L = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
         if (v === 0) lum[ci] = L;
-        if (this.isBleed[ci]) {
-          if (!this.leak[ci]) continue;                 // this one does not spill
-          c.globalAlpha = 1; c.fillStyle = '#000';
-          c.fillRect(x * cw, y * cw, cw, cw);           // its own ground, out in the margin
+        var spilling = this.isBleed[ci] === 1;
+        if (spilling && !this.leak[ci]) continue;       // this one does not get out
+        // Out in the margin only the type escapes, never the tile. A tile is a
+        // solid square of the picture: a row of them along an edge is a frame,
+        // no matter how softly it fades. Letters getting out on their own is a
+        // spill. They also carry less gain out there, because the page behind
+        // them is white and the bright ink the picture uses would vanish on it.
+        if (!spilling) {
+          c.globalAlpha = o.tileOpacity;
+          c.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
+          c.fillRect(x * cw, y * cw, cw, cw);
         }
-        c.globalAlpha = o.tileOpacity;
-        c.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
-        c.fillRect(x * cw, y * cw, cw, cw);
         c.globalAlpha = o.textOpacity;
         var ch;
         if (v === 0) {
@@ -253,7 +259,7 @@
           ch = ramp[Math.max(0, Math.min(ramp.length - 1, t0 + jitter))];
         }
         if (ch !== ' ') {
-          c.fillStyle = o.chromatic ? inkColour(r, g, b, L, o) : o.textColor;
+          c.fillStyle = o.chromatic ? inkColour(r, g, b, L, o, spilling ? 0.42 : 1) : o.textColor;
           c.save(); c.translate(x * cw + cw / 2, y * cw + cw / 2); c.scale(sx, 1);
           c.fillText(ch, 0, 0); c.restore();
         }
@@ -321,9 +327,16 @@
     var ramp = RAMPS[o.ramp] || RAMPS.long;
     var have = t > 0 && this.lum && this.cellRGB;   // is there a picture yet
     var fam = getComputedStyle(document.body).getPropertyValue('--mono') || 'monospace';
+    var Bf = this.B || 0;
 
     ctx.globalAlpha = 1;
-    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+    ctx.clearRect(0, 0, W, H);
+    // Black goes down behind the picture ONLY. Filling the whole canvas would
+    // lay it across the margin too, and since the margin hangs outside the
+    // picture that draws a black bar around every plate for the whole of the
+    // load. The margin belongs to the cursor; at rest it is not there at all.
+    ctx.fillStyle = '#000';
+    ctx.fillRect(Bf, Bf, W - Bf * 2, H - Bf * 2);
     ctx.font = '700 ' + cw + 'px ' + fam;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     var gw = ctx.measureText('M').width || cw * 0.6, sx = cw / gw;
@@ -541,6 +554,31 @@
       t.drawImage(this.masks[v2], 0, 0, cols, rows, 0, 0, W, H);
       t.globalCompositeOperation = 'source-over';
       ctx.drawImage(t.canvas, 0, 0);
+    }
+
+    // Dissolve the spill outward, per pixel. Fading it per cell cannot work:
+    // the margin is only two or three cells deep, so a per cell fade has two or
+    // three steps to do it in and lands on a hard line, which reads as a frame
+    // around the picture rather than as ink getting out of it. Erasing with a
+    // gradient is continuous, so the spill just stops being there.
+    if (this.B) {
+      var Bd = this.B;
+      ctx.globalCompositeOperation = 'destination-out';
+      var edges = [
+        [0, 0, W, Bd, 0, Bd, 0, 0],                 // top
+        [0, H - Bd, W, Bd, 0, H - Bd, 0, H],        // bottom
+        [0, 0, Bd, H, Bd, 0, 0, 0],                 // left
+        [W - Bd, 0, Bd, H, W - Bd, 0, W, 0]         // right
+      ];
+      for (var e = 0; e < 4; e++) {
+        var q2 = edges[e];
+        var grad = ctx.createLinearGradient(q2[4], q2[5], q2[6], q2[7]);
+        grad.addColorStop(0, 'rgba(0,0,0,0)');
+        grad.addColorStop(1, 'rgba(0,0,0,1)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(q2[0], q2[1], q2[2], q2[3]);
+      }
+      ctx.globalCompositeOperation = 'source-over';
     }
     return busy;
   };
