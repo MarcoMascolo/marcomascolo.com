@@ -81,7 +81,10 @@
       invert: false, churnHz: 18, churnAmt: 1.6, textColor: '#eef1f4',
       // Colour. satBoost pushes each channel away from the cell's own mean;
       // palette + tint lend a hue to cells that have none of their own.
-      palette: 'warm', satBoost: 2.6, tint: 0.85, gain: 1.35
+      palette: 'warm', satBoost: 2.6, tint: 0.85, gain: 1.35,
+      // How long the static takes to tune into the true type, before the
+      // resolve takes over and carries it to the photo.
+      morph: 900
     }, opts || {});
     // Capped harder than the lab page: these run many at a time on a real page.
     this.dpr = Math.min(window.devicePixelRatio || 1, 1.25);
@@ -116,9 +119,14 @@
     var w = this.host.clientWidth, h = this.host.clientHeight;
     if (!h && this.img) h = Math.round(w * this.img.naturalHeight / Math.max(1, this.img.naturalWidth));
     if (!w || !h) return false;
-    this.W = Math.max(1, Math.round(w * this.dpr));
-    this.H = Math.max(1, Math.round(h * this.dpr));
-    this.cv.width = this.W; this.cv.height = this.H;
+    var W = Math.max(1, Math.round(w * this.dpr));
+    var H = Math.max(1, Math.round(h * this.dpr));
+    this.W = W; this.H = H;
+    // Assigning width or height reallocates the backing store and wipes the
+    // canvas, so only do it when the size actually moved. The noise loop calls
+    // through here several times a second.
+    if (this.cv.width !== W) this.cv.width = W;
+    if (this.cv.height !== H) this.cv.height = H;
     return true;
   };
 
@@ -133,9 +141,8 @@
     p.clearRect(0, 0, W, H);
     p.drawImage(this.img, (W - iw * s) / 2, (H - ih * s) / 2, iw * s, ih * s);
 
-    var cw = Math.max(3, Math.round(o.cell * this.dpr));
-    var cols = Math.ceil(W / cw), rows = Math.ceil(H / cw);
-    this.cw = cw; this.cols = cols; this.rows = rows;
+    this.grid();
+    var cw = this.cw, cols = this.cols, rows = this.rows;
 
     this.samp.width = cols; this.samp.height = rows;
     var sc = this.samp.getContext('2d', { willReadFrequently: true });
@@ -161,6 +168,11 @@
     var lum = new Float32Array(cols * rows);
     var NV = 4;
     this.fields = [];
+    // Kept for the morph: it needs the per cell truth to interpolate the
+    // static toward, and it has to be the same numbers this field is built
+    // from or the two would not meet.
+    this.lum = lum;
+    this.cellRGB = d;
 
     for (var v = 0; v < NV; v++) {
       var cv = v === 0 ? this.field : document.createElement('canvas');
@@ -225,7 +237,115 @@
     }
     this.heat = new Float32Array(cols * rows);
     this.ready = true;
-    this.draw(0);
+    // Deliberately does not draw. resolveProg still sits at 1 here, so drawing
+    // would slam the finished photo onto the canvas for a frame before play()
+    // sets it back to 0 and the type snaps in. Static, photo, type, resolve.
+    // The caller knows what should appear next; this does not.
+  };
+
+  // The cell grid. build() and the noise have to agree on it exactly, or the
+  // static could not line up with the picture it turns into.
+  DetailPlate.prototype.grid = function () {
+    var cw = Math.max(3, Math.round(this.o.cell * this.dpr));
+    this.cw = cw;
+    this.cols = Math.ceil(this.W / cw);
+    this.rows = Math.ceil(this.H / cw);
+  };
+
+  // One field, drawn live, at morph position t.
+  //
+  //   t = 0  every cell is random: pure static, no picture needed
+  //   t = 1  every cell is the truth, identical to the pre-rendered field 0
+  //
+  // That is the whole trick. The static and the finished type differ only in
+  // what luminance each cell is told to carry, so interpolating that one number
+  // makes the noise tune into the picture instead of cutting to it. Cells are
+  // re-randomised every frame, so early on it churns like a signal that has not
+  // locked, and as t climbs the churn narrows onto the real values and settles.
+  // Landing exactly on field 0 is what lets the resolve take over without a seam.
+  DetailPlate.prototype.renderField = function (t) {
+    if (!this.W || !this.cols) return false;
+    var W = this.W, H = this.H, o = this.o, ctx = this.ctx;
+    var cw = this.cw, cols = this.cols, rows = this.rows;
+    var ramp = RAMPS[o.ramp] || RAMPS.long;
+    var have = t > 0 && this.lum && this.cellRGB;   // is there a picture yet
+    var fam = getComputedStyle(document.body).getPropertyValue('--mono') || 'monospace';
+
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+    ctx.font = '700 ' + cw + 'px ' + fam;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var gw = ctx.measureText('M').width || cw * 0.6, sx = cw / gw;
+
+    for (var y = 0; y < rows; y++) for (var x = 0; x < cols; x++) {
+      var i = y * cols + x;
+      // Weighted toward the sparse end of the ramp: a flat draw fills every
+      // cell and reads as a solid block rather than as type.
+      var rl = Math.random() * Math.random();
+      var q = rl * 255;
+      var L, r, g, b;
+      if (have) {
+        var j = i * 4;
+        L = this.lum[i] * t + rl * (1 - t);
+        r = this.cellRGB[j] * t + q * (1 - t);
+        g = this.cellRGB[j + 1] * t + q * (1 - t);
+        b = this.cellRGB[j + 2] * t + q * (1 - t);
+      } else {
+        L = rl; r = g = b = q;
+      }
+      ctx.globalAlpha = o.tileOpacity;
+      ctx.fillStyle = 'rgb(' + (r | 0) + ',' + (g | 0) + ',' + (b | 0) + ')';
+      ctx.fillRect(x * cw, y * cw, cw, cw);
+
+      var ch = ramp[Math.min(ramp.length - 1, Math.floor(L * ramp.length))];
+      if (ch !== ' ') {
+        ctx.globalAlpha = o.textOpacity;
+        ctx.fillStyle = o.chromatic ? inkColour(r, g, b, L, o) : o.textColor;
+        ctx.save(); ctx.translate(x * cw + cw / 2, y * cw + cw / 2); ctx.scale(sx, 1);
+        ctx.fillText(ch, 0, 0); ctx.restore();
+      }
+    }
+    ctx.globalAlpha = 1;
+    return true;
+  };
+
+  // Type on the first frame, before there is any picture to draw. A plate
+  // cannot resolve until its image has downloaded, and cold that leaves the box
+  // empty: black, then a pop. Nothing about that says "working", it says
+  // "broken". Static needs no image. On a reload the image is cached and this
+  // is over before it starts, which is why the lag only ever showed up cold.
+  DetailPlate.prototype.startNoise = function () {
+    var self = this;
+    if (this.ready || !this.layout()) return false;
+    this.grid();
+    if (!this.renderField(0)) return false;
+    if (reducedMotion()) return true;              // one still frame is enough
+    this.noiseTimer = setInterval(function () {
+      if (self.ready || self.tainted || self.morphing) { self.stopNoise(); return; }
+      self.renderField(0);
+    }, 90);
+    return true;
+  };
+
+  DetailPlate.prototype.stopNoise = function () {
+    if (this.noiseTimer) { clearInterval(this.noiseTimer); this.noiseTimer = null; }
+  };
+
+  // Static to true type. Ends exactly on field 0, so play() picks the picture
+  // up mid stride and carries it the rest of the way to the photo.
+  DetailPlate.prototype.morph = function (done) {
+    var self = this, T = this.o.morph;
+    this.stopNoise();
+    if (!T || reducedMotion() || !this.lum) { done(); return; }
+    this.morphing = true;
+    var t0 = performance.now();
+    var step = function (now) {
+      var t = Math.min(1, (now - t0) / T);
+      self.renderField(smooth(t));
+      if (t < 1) requestAnimationFrame(step);
+      else { self.morphing = false; done(); }
+    };
+    requestAnimationFrame(step);
   };
 
   // Mouse only on purpose. The lab page called preventDefault on touchmove,
@@ -256,7 +376,9 @@
   };
 
   DetailPlate.prototype.kick = function () {
-    if (this.raf || !this.ready || this.tainted) return;
+    // The morph owns the canvas while it runs. A cursor wandering in would
+    // otherwise start drawing resolved frames over the top of it.
+    if (this.raf || !this.ready || this.tainted || this.morphing) return;
     var self = this;
     this.last = performance.now();
     var step = function (now) {
@@ -349,6 +471,7 @@
   // this a long gallery would keep every plate it ever scrolled past.
   DetailPlate.prototype.destroy = function () {
     if (this.raf) cancelAnimationFrame(this.raf);
+    this.stopNoise();
     this.raf = null; this.ready = false; this.inside = false;
     var all = [this.photo, this.field, this.tmp, this.samp]
       .concat(this.fields || []).concat(this.masks || []);
@@ -412,6 +535,13 @@
     entry.host.classList.remove('plate-pending');
   }
 
+  // Give up: stop the noise, drop the canvas, hand the picture back.
+  function surrender(entry) {
+    if (entry.plate) entry.plate.stopNoise();
+    entry.host.classList.remove('plate-on');
+    reveal(entry);
+  }
+
   function mount(entry) {
     if (entry.built || entry.building) return;
     entry.building = true;
@@ -422,20 +552,29 @@
     // the fold to above it without it ever intersecting, so it would never
     // mount, never reveal, and stay blank for good.
     entry.host.classList.add('plate-pending');
-    entry.guard = setTimeout(function () { reveal(entry); }, 2500);
+    entry.guard = setTimeout(function () { if (!entry.built) surrender(entry); }, 4000);
     var plate = entry.plate || new DetailPlate(entry.host.querySelector('.plate-canvas'), entry.host, entry.opts);
     entry.plate = plate;
+
+    // Type on the first frame, before the image has even started arriving.
+    if (plate.startNoise()) entry.host.classList.add('plate-on');
+
     plate.setImage(entry.src).then(function () {
       entry.building = false;
-      if (!plate.ready) { reveal(entry); return; }
+      plate.stopNoise();
+      if (!plate.ready || plate.tainted) { surrender(entry); return; }
       entry.built = true;
-      if (plate.tainted) { reveal(entry); return; }   // fall back to the plain photo
       entry.host.classList.add('plate-on');
       reveal(entry);                                  // canvas is up; pending is moot
       live.push(entry); retire(entry);
       if (entry.played) { plate.resolveProg = 1; plate.draw(0); }
-      else { entry.played = true; plate.play(); }
-    }).catch(function () { entry.building = false; reveal(entry); });
+      else {
+        entry.played = true;
+        // Static tunes into the true type, then the type resolves into the
+        // photo. One continuous move, no cut anywhere in it.
+        plate.morph(function () { plate.play(); });
+      }
+    }).catch(function () { entry.building = false; surrender(entry); });
   }
 
   function init() {
