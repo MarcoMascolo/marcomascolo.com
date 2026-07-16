@@ -584,8 +584,18 @@ pre { background: #ffffff; padding: 0.8rem 1rem; overflow-x: auto; border-left: 
   pointer-events: none;
   image-rendering: auto;
 }
+/* opacity, not visibility: the canvas is aria-hidden, so hiding the image the
+   other way would strip its alt text out of the accessibility tree and leave
+   these pictures announcing nothing at all. */
 .plate-host.plate-on > canvas.plate-canvas { display: block; }
-.plate-host.plate-on > img { visibility: hidden; }
+.plate-host.plate-on > img { opacity: 0; }
+/* Held back only while a plate is actually being built, so a picture is never
+   shown plain and then covered in type a beat later, which reads as a bug.
+   The box is blank while the image downloads anyway, so this borrows time
+   that was already empty. A timer in the script reveals the photo if the
+   plate never arrives. */
+.plate-host.plate-pending > img { opacity: 0; }
+.banner.plate-pending { background-image: none; }
 
 /* ───────── mobile ───────── */
 @media (max-width: 700px) {

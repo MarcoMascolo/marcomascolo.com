@@ -18,6 +18,45 @@
   };
 
   var smooth = function (t) { return t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t); };
+  var clamp255 = function (v) { return v < 0 ? 0 : v > 255 ? 255 : v | 0; };
+
+  // Luminance to hue ramps. Stops are [r,g,b], dark end first.
+  var PALETTES = {
+    vivid:    null,                                    // no tint, the photo's own colour only
+    warm:     [[26, 12, 48], [140, 26, 40], [255, 58, 31], [255, 176, 41], [255, 246, 176]],
+    spectrum: [[18, 8, 54], [122, 24, 130], [232, 62, 74], [240, 166, 38], [198, 246, 60]]
+  };
+
+  function rampAt(stops, t) {
+    var n = stops.length - 1, i = Math.min(n - 1, Math.floor(t * n)), f = t * n - i;
+    var a = stops[i], b = stops[i + 1];
+    return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f];
+  }
+
+  // Colour for one glyph. The old code did rgb * 1.5, which scales every channel
+  // by the same factor: that is brightness, it preserves the ratio between the
+  // channels, so a grey cell stays grey and only gets lighter. On a desaturated
+  // photo that produced black and white type. Instead push each channel away
+  // from the cell's own mean, which is saturation, and where a cell has almost
+  // no colour of its own, lend it one from a luminance ramp.
+  function inkColour(r, g, b, L, o) {
+    var mean = (r + g + b) / 3;
+    var rr = mean + (r - mean) * o.satBoost;
+    var gg = mean + (g - mean) * o.satBoost;
+    var bb = mean + (b - mean) * o.satBoost;
+
+    var stops = PALETTES[o.palette];
+    if (stops && o.tint > 0) {
+      // How much colour does this cell actually carry, 0 for pure grey.
+      var chroma = Math.max(Math.abs(r - mean), Math.abs(g - mean), Math.abs(b - mean)) / 90;
+      var mix = Math.max(0, 1 - chroma) * o.tint;
+      if (mix > 0) {
+        var c = rampAt(stops, Math.max(0, Math.min(1, L)));
+        rr += (c[0] - rr) * mix; gg += (c[1] - gg) * mix; bb += (c[2] - bb) * mix;
+      }
+    }
+    return 'rgb(' + clamp255(rr * o.gain) + ',' + clamp255(gg * o.gain) + ',' + clamp255(bb * o.gain) + ')';
+  }
 
   function rankNorm(v) {
     // Raw Sobel is badly skewed, most cells sit near zero. Normalising by the
@@ -37,9 +76,12 @@
   function DetailPlate(canvas, host, opts) {
     this.cv = canvas; this.host = host; this.ctx = canvas.getContext('2d');
     this.o = Object.assign({
-      cell: 8, feather: 0.14, duration: 1600, radius: 130, trail: 220,
+      cell: 8, feather: 0.14, duration: 3200, radius: 130, trail: 220,
       tileOpacity: 0.5, textOpacity: 1, ramp: 'long', chromatic: true,
-      invert: false, churnHz: 18, churnAmt: 1.6, textColor: '#eef1f4'
+      invert: false, churnHz: 18, churnAmt: 1.6, textColor: '#eef1f4',
+      // Colour. satBoost pushes each channel away from the cell's own mean;
+      // palette + tint lend a hue to cells that have none of their own.
+      palette: 'warm', satBoost: 2.6, tint: 0.85, gain: 1.35
     }, opts || {});
     // Capped harder than the lab page: these run many at a time on a real page.
     this.dpr = Math.min(window.devicePixelRatio || 1, 1.25);
@@ -148,11 +190,7 @@
           ch = ramp[Math.max(0, Math.min(ramp.length - 1, t0 + jitter))];
         }
         if (ch !== ' ') {
-          if (o.chromatic) {
-            var kk = 1.5;
-            c.fillStyle = 'rgb(' + (Math.min(255, r * kk) | 0) + ',' +
-              (Math.min(255, g * kk) | 0) + ',' + (Math.min(255, b * kk) | 0) + ')';
-          } else c.fillStyle = o.textColor;
+          c.fillStyle = o.chromatic ? inkColour(r, g, b, L, o) : o.textColor;
           c.save(); c.translate(x * cw + cw / 2, y * cw + cw / 2); c.scale(sx, 1);
           c.fillText(ch, 0, 0); c.restore();
         }
@@ -367,21 +405,37 @@
     }
   }
 
+  // Never leave a hole. If a plate cannot be ready in reasonable time, or at
+  // all, the plain photo comes back and the page just looks normal.
+  function reveal(entry) {
+    clearTimeout(entry.guard);
+    entry.host.classList.remove('plate-pending');
+  }
+
   function mount(entry) {
     if (entry.built || entry.building) return;
     entry.building = true;
+    // Hide only now, never at init. Showing the plain photo and covering it in
+    // type a beat later reads as a bug, so a picture we are about to draw is
+    // held back. But a picture we may never draw must never be held back at
+    // all: a fast scroll or a jump to an anchor can carry an image from below
+    // the fold to above it without it ever intersecting, so it would never
+    // mount, never reveal, and stay blank for good.
+    entry.host.classList.add('plate-pending');
+    entry.guard = setTimeout(function () { reveal(entry); }, 2500);
     var plate = entry.plate || new DetailPlate(entry.host.querySelector('.plate-canvas'), entry.host, entry.opts);
     entry.plate = plate;
     plate.setImage(entry.src).then(function () {
       entry.building = false;
-      if (!plate.ready) return;
+      if (!plate.ready) { reveal(entry); return; }
       entry.built = true;
-      if (plate.tainted) return;               // leave the plain photo showing
+      if (plate.tainted) { reveal(entry); return; }   // fall back to the plain photo
       entry.host.classList.add('plate-on');
+      reveal(entry);                                  // canvas is up; pending is moot
       live.push(entry); retire(entry);
       if (entry.played) { plate.resolveProg = 1; plate.draw(0); }
       else { entry.played = true; plate.play(); }
-    }).catch(function () { entry.building = false; });
+    }).catch(function () { entry.building = false; reveal(entry); });
   }
 
   function init() {
@@ -413,6 +467,15 @@
 
     if (!('IntersectionObserver' in window)) { hosts.forEach(mount); return; }
 
+    // Anything already on screen is claimed now, synchronously, rather than
+    // waiting a frame for the observer to say what we can already see. That
+    // frame is the difference between the banner arriving as type and the
+    // banner arriving as a photo that then turns into type.
+    hosts.forEach(function (h) {
+      var r = h.host.getBoundingClientRect();
+      if (r.bottom > -300 && r.top < (window.innerHeight || 0) + 300) mount(h);
+    });
+
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         var entry = hosts.filter(function (h) { return h.host === e.target; })[0];
@@ -435,6 +498,8 @@
       }, 180);
     });
   }
+
+  window.DetailPlate = DetailPlate;
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
