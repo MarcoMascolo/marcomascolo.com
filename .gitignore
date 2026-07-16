@@ -20,3 +20,11 @@ STYLE.md
 
 # How-the-site-is-made notes (kept local, not public)
 README.md
+
+# Source material, and the lab page the detail plate was prototyped in. That
+# page explains how the effect works, which is exactly what the published
+# source is not supposed to do.
+brainstorm idea style/
+
+# Build helpers (image crops and the like). Local only.
+tools/

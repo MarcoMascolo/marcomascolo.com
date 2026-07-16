@@ -1,0 +1,501 @@
+/* Cell communication flowchart.
+   The source artifact is a wall: 1417 by 7302 points, drawn wide because a
+   screen is wide. This column is 800px, so the chart is rebuilt to read down
+   the page, one numbered phase at a time. The notation survives the move: the
+   shapes still mean what the legend says they mean, and the grey line under
+   every block is still the plain English of the block above it. */
+
+.fc {
+  --fc-teal:    #0e7c72;
+  --fc-teal-bg: #f1faf8;
+  --fc-blue:    #1d5f8a;
+  --fc-blue-bg: #e7f2fa;
+  --fc-yellow:  #7d8a00;
+  --fc-yellow-bg:#eef86a;
+  --fc-red:     #b4232a;
+  --fc-red-bg:  #fdecec;
+  --fc-purple:  #5f4a9b;
+  --fc-purple-bg:#efeafa;
+  --fc-line:    #d8d8d8;
+  --fc-ink:     #111111;
+  --fc-mute:    #6b6b6b;
+
+  margin: 2.5rem 0;
+}
+
+/* ── phase ───────────────────────────────────────────────────────── */
+
+.fc-phase { margin: 0 0 0.5rem; scroll-margin-top: 1rem; }
+
+.fc-phase-head {
+  border-top: 2px solid var(--fc-teal);
+  background: var(--fc-teal-bg);
+  padding: 0.7rem 0.9rem 0.75rem;
+  margin: 0 0 1.4rem;
+}
+.fc-phase-num {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: bold;
+  letter-spacing: 0.14em;
+  color: var(--fc-teal);
+}
+.fc-phase-title {
+  font-family: var(--mono);
+  font-size: 0.86rem;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fc-ink);
+  margin: 0.15rem 0 0.2rem;
+  line-height: 1.35;
+}
+.fc-phase-sub {
+  font-size: 0.86rem;
+  font-style: italic;
+  color: var(--fc-mute);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── the vertical run ────────────────────────────────────────────── */
+
+.fc-flow {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+
+/* ── nodes ───────────────────────────────────────────────────────── */
+
+.fc-node {
+  border: 1px solid var(--fc-line);
+  background: #ffffff;
+  padding: 0.6rem 0.8rem;
+  position: relative;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.fc-node:hover {
+  border-color: var(--fc-ink);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+}
+.fc-label {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  margin: 0;
+  color: var(--fc-ink);
+}
+.fc-label b, .fc-label strong { font-weight: bold; }
+.fc-gloss {
+  font-size: 0.8rem;
+  font-style: italic;
+  line-height: 1.45;
+  color: var(--fc-mute);
+  margin: 0.3rem 0 0;
+}
+.fc-tag {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  font-weight: bold;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0 0 0.3rem;
+  color: var(--fc-mute);
+}
+
+/* Oval, start and end. */
+.fc-terminator {
+  border-radius: 999px;
+  border-color: var(--fc-ink);
+  padding-left: 1.4rem;
+  padding-right: 1.4rem;
+  text-align: center;
+}
+/* Rectangle, a step. Default .fc-node. */
+/* Diamond, a decision. A true rotated square cannot hold this much text and
+   stay responsive, so the corners are cut instead. Same reading: a question. */
+.fc-decision {
+  clip-path: polygon(1.1rem 0, calc(100% - 1.1rem) 0, 100% 50%, calc(100% - 1.1rem) 100%, 1.1rem 100%, 0 50%);
+  border: 0;
+  background: #f4f4f4;
+  box-shadow: none;
+  padding: 0.7rem 1.5rem;
+  text-align: center;
+}
+.fc-decision:hover { background: #ececec; box-shadow: none; }
+.fc-decision .fc-tag { color: var(--fc-ink); }
+/* Blue, an input the cell receives. */
+.fc-input {
+  background: var(--fc-blue-bg);
+  border-color: var(--fc-blue);
+  border-left-width: 3px;
+}
+.fc-input .fc-tag { color: var(--fc-blue); }
+/* Neon yellow, an output the cell produces. */
+.fc-output {
+  background: var(--fc-yellow-bg);
+  border-color: var(--fc-yellow);
+  border-left-width: 3px;
+}
+.fc-output .fc-tag { color: #4c5400; }
+.fc-output .fc-gloss { color: #5b6300; }
+/* Red, a failure or disease outcome. */
+.fc-failure {
+  background: var(--fc-red-bg);
+  border-color: var(--fc-red);
+  border-left-width: 3px;
+  border-radius: 999px;
+  padding-left: 1.3rem;
+  padding-right: 1.3rem;
+}
+.fc-failure .fc-tag { color: var(--fc-red); }
+/* Cylinder, a data store. */
+.fc-store {
+  background: var(--fc-purple-bg);
+  border-color: var(--fc-purple);
+  border-radius: 44% / 12%;
+  text-align: center;
+  padding: 0.8rem 1.2rem;
+}
+.fc-store .fc-tag { color: var(--fc-purple); }
+/* Document, an information sheet. */
+.fc-document {
+  border-color: var(--fc-ink);
+  border-bottom: 0;
+  padding-bottom: 1.1rem;
+  background:
+    radial-gradient(ellipse 50% 0.7rem at 25% 100%, #fff 50%, transparent 51%),
+    radial-gradient(ellipse 50% 0.7rem at 75% calc(100% - 0.35rem), var(--fc-ink) 50%, transparent 51%),
+    linear-gradient(#fff, #fff);
+}
+/* A quiet dead end: the branch that goes nowhere. */
+.fc-quiet {
+  background: #fafafa;
+  border-style: dashed;
+  color: var(--fc-mute);
+}
+.fc-quiet .fc-label { color: var(--fc-mute); font-size: 0.88rem; }
+
+/* ── arrows ──────────────────────────────────────────────────────── */
+
+.fc-arrow {
+  align-self: center;
+  width: 1px;
+  height: 1.5rem;
+  background: var(--fc-ink);
+  position: relative;
+  flex: none;
+}
+.fc-arrow::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -1px;
+  transform: translateX(-50%);
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 6px solid var(--fc-ink);
+}
+/* Teal, carries the story from one numbered phase to the next. */
+.fc-arrow-phase { background: var(--fc-teal); height: 2.2rem; width: 2px; }
+.fc-arrow-phase::after { border-top-color: var(--fc-teal); border-left-width: 5px; border-right-width: 5px; border-top-width: 8px; }
+.fc-arrow[data-label]::before {
+  content: attr(data-label);
+  position: absolute;
+  left: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  color: var(--fc-mute);
+  white-space: nowrap;
+}
+
+/* ── branching ───────────────────────────────────────────────────── */
+
+.fc-branch {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.9rem;
+  margin: 0;
+}
+.fc-arm { display: flex; flex-direction: column; }
+.fc-arm-label {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fc-teal);
+  padding: 0 0 0.35rem;
+  border-top: 1px solid var(--fc-line);
+  padding-top: 0.5rem;
+}
+.fc-arm .fc-node { flex: 1; }
+
+/* ── grid of peers ───────────────────────────────────────────────── */
+
+.fc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.6rem;
+}
+.fc-grid .fc-label { font-size: 0.88rem; }
+.fc-grid .fc-gloss { font-size: 0.76rem; }
+.fc-sys-name {
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: block;
+  margin: 0 0 0.15rem;
+}
+
+/* ── side notes and tables ───────────────────────────────────────── */
+
+.fc-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.9rem;
+}
+.fc-aside {
+  border: 1px solid var(--fc-line);
+  background: #fbfbfb;
+  padding: 0.7rem 0.85rem;
+}
+.fc-aside-title {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fc-teal);
+  margin: 0 0 0.5rem;
+}
+.fc-dl { margin: 0; font-size: 0.84rem; line-height: 1.45; }
+.fc-dl dt {
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  font-weight: bold;
+  color: var(--fc-ink);
+  margin: 0.45rem 0 0.05rem;
+}
+.fc-dl dt:first-child { margin-top: 0; }
+.fc-dl dd { margin: 0; color: var(--fc-mute); }
+
+.fc-note {
+  border-left: 2px solid var(--fc-line);
+  padding: 0.1rem 0 0.1rem 0.85rem;
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--fc-mute);
+}
+.fc-note b { color: var(--fc-ink); }
+.fc-band {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fc-teal);
+  text-align: center;
+  margin: 1.2rem 0 0.7rem;
+}
+
+/* ── the French flag ─────────────────────────────────────────────── */
+
+.fc-flag { margin: 0.2rem 0 0; }
+/* The two thresholds sit ON the boundaries they cut, not in a caption. That
+   placement is the argument: one smooth signal, split twice, three fates. */
+.fc-flag-thresholds {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: var(--fc-teal);
+  margin: 0 0 0.2rem;
+}
+.fc-flag-thresholds span {
+  justify-self: end;
+  transform: translateX(50%);
+  line-height: 1;
+}
+.fc-flag-thresholds span:last-child { grid-column: 2; }
+.fc-flag-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--fc-line);
+}
+.fc-flag-band {
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+}
+.fc-flag-band.b1 { background: #0b5f58; }
+.fc-flag-band.b2 { background: #4aa79c; }
+.fc-flag-band.b3 { background: #bfe3de; color: #0b3d38; }
+.fc-flag-axis {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fc-mute);
+  margin: 0.3rem 0 0;
+}
+.fc-flag-rule {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--fc-mute);
+  text-align: center;
+  margin: 0.5rem 0 0;
+  line-height: 1.5;
+}
+
+/* The mono face draws a theta almost exactly like a slashed zero, so "θ1"
+   reads as "01" at these sizes. The thresholds are the whole point of the
+   French flag, so the symbol gets the serif face wherever it lands, and it
+   opts out of the uppercasing that would turn it into a capital theta. */
+.fc-theta {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.1em;
+  text-transform: none;
+}
+
+/* ── connector jumps ─────────────────────────────────────────────── */
+
+.fc-jump {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  border: 1.5px solid var(--fc-ink);
+  border-radius: 50%;
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  font-weight: bold;
+  color: var(--fc-ink);
+  background: #ffffff;
+  cursor: pointer;
+  text-decoration: none;
+  vertical-align: middle;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
+}
+.fc-jump:hover, .fc-jump:focus-visible { background: var(--fc-ink); color: #ffffff; }
+.fc-jump.lit {
+  background: var(--fc-teal);
+  border-color: var(--fc-teal);
+  color: #ffffff;
+  transform: scale(1.18);
+}
+.fc-jumps { display: flex; gap: 0.4rem; justify-content: center; align-items: center; margin: 0.2rem 0; }
+.fc-jumps-note {
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.06em;
+  color: var(--fc-mute);
+  text-align: center;
+  margin: 0.35rem 0 0;
+}
+
+/* ── phase index ─────────────────────────────────────────────────── */
+
+.fc-index {
+  border-top: 1px solid var(--fc-line);
+  border-bottom: 1px solid var(--fc-line);
+  padding: 0.8rem 0;
+  margin: 0 0 2rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  line-height: 1.9;
+  letter-spacing: 0.04em;
+}
+.fc-index b {
+  color: var(--fc-ink);
+  letter-spacing: 0.12em;
+  margin-right: 0.3rem;
+}
+.fc-index a { color: var(--fc-mute); text-decoration: none; border-bottom: 1px solid var(--fc-line); }
+.fc-index a:hover { color: var(--fc-teal); border-bottom-color: var(--fc-teal); }
+.fc-index .sep { color: var(--fc-line); margin: 0 0.35rem; }
+
+/* ── legend and glossary ─────────────────────────────────────────── */
+
+.fc-legend, .fc-glossary {
+  border-top: 2px solid var(--fc-ink);
+  padding: 1rem 0 0;
+  margin: 2.5rem 0 0;
+}
+.fc-legend-title, .fc-glossary-title {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0 0 0.9rem;
+}
+.fc-legend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.7rem 1.2rem;
+}
+.fc-legend-item { display: flex; gap: 0.6rem; align-items: flex-start; }
+.fc-swatch {
+  flex: none;
+  width: 1.6rem;
+  height: 1.1rem;
+  border: 1px solid var(--fc-ink);
+  margin-top: 0.15rem;
+}
+.fc-swatch.s-terminator { border-radius: 999px; }
+.fc-swatch.s-decision { clip-path: polygon(0 50%, 50% 0, 100% 50%, 50% 100%); border: 0; background: #d0d0d0; }
+.fc-swatch.s-input { background: var(--fc-blue-bg); border-color: var(--fc-blue); }
+.fc-swatch.s-output { background: var(--fc-yellow-bg); border-color: var(--fc-yellow); }
+.fc-swatch.s-failure { background: var(--fc-red-bg); border-color: var(--fc-red); border-radius: 999px; }
+.fc-swatch.s-store { background: var(--fc-purple-bg); border-color: var(--fc-purple); border-radius: 44% / 22%; }
+.fc-swatch.s-teal { background: var(--fc-teal); border: 0; height: 2px; margin-top: 0.6rem; }
+.fc-swatch.s-arrow { background: var(--fc-ink); border: 0; height: 1px; margin-top: 0.6rem; }
+.fc-legend-item p { margin: 0; font-size: 0.8rem; line-height: 1.45; }
+.fc-legend-item b { display: block; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; }
+.fc-legend-item span { color: var(--fc-mute); }
+
+.fc-glossary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 0.7rem 1.4rem;
+}
+.fc-term { margin: 0; }
+.fc-term b { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.04em; }
+.fc-term span { display: block; font-size: 0.82rem; line-height: 1.45; color: var(--fc-mute); }
+
+.fc-source {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  color: var(--fc-mute);
+  margin: 1.6rem 0 0;
+  line-height: 1.6;
+}
+
+@media (max-width: 700px) {
+  .fc-decision { padding-left: 1.1rem; padding-right: 1.1rem; }
+  .fc-label { font-size: 0.9rem; }
+  .fc-flag-band { font-size: 0.68rem; padding: 0.6rem 0.3rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fc-node, .fc-jump { transition: none; }
+}

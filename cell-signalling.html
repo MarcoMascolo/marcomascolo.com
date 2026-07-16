@@ -1,0 +1,1001 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Intelligence From Simple Systems: Seven Months Inside Cell Signalling · Marco Mascolo</title>
+  <meta name="description" content="I am not a biologist. Seven months of reading about how cells talk, written up at a high level, plus the full flowchart of how cells communicate to build a body, and why all of it reads like mechanical engineering to me.">
+  <link rel="canonical" href="https://marcomascolo.com/cell-signalling.html">
+  <meta property="og:title" content="Intelligence From Simple Systems: Seven Months Inside Cell Signalling">
+  <meta property="og:description" content="I am not a biologist, but I cannot stop reading cells as machines.">
+  <meta property="og:image" content="/assets/banner.jpg?v=3">
+  <meta property="og:type" content="article">
+  <meta name="twitter:card" content="summary_large_image">
+  <script>/* CYCLE DISABLED */</script>
+  <link rel="stylesheet" href="/style.css?v=10">
+  <link rel="stylesheet" href="/assets/flowchart.css?v=2">
+  <script src="/assets/detail-plate.js?v=1" defer></script>
+  <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-192.png">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div class="glitches" aria-hidden="true">
+    <span class="g g-1"></span><span class="g g-2"></span><span class="g g-3"></span><span class="g g-4"></span>
+    <span class="g g-5"></span><span class="g g-6"></span><span class="g g-7"></span><span class="g g-8"></span>
+    <span class="g g-9"></span><span class="g g-10"></span><span class="g g-11"></span><span class="g g-12"></span>
+    <span class="g g-13"></span><span class="g g-14"></span><span class="g g-15"></span><span class="g g-16"></span>
+    <span class="g g-17"></span><span class="g g-18"></span><span class="g g-19"></span><span class="g g-20"></span>
+    <span class="g g-21"></span><span class="g g-22"></span><span class="g g-23"></span><span class="g g-24"></span>
+    <span class="g g-25"></span><span class="g g-26"></span><span class="g g-27"></span><span class="g g-28"></span>
+    <span class="g g-29"></span><span class="g g-30"></span><span class="g g-31"></span><span class="g g-32"></span>
+    <span class="g g-33"></span><span class="g g-34"></span><span class="g g-35"></span><span class="g g-36"></span>
+  </div>
+
+  <main id="main">
+    <header class="intro">
+      <h1 class="name">Intelligence From Simple Systems: Seven Months Inside Cell Signalling</h1>
+      <nav class="top" aria-label="Main">
+        <a href="/">Home</a>
+        <a href="/me.html">Me</a>
+        <a href="/beliefs.html">Beliefs</a>
+        <a href="/random-blogging.html" aria-current="page">Blog</a>
+        <a href="/interactive.html">Interactive</a>
+        <a href="/pics.html">Pics</a>
+      </nav>
+    </header>
+
+    <hr class="divider">
+
+    <p class="meta"><code>DRAFT</code> · biology · seven months of reading, written up in one go</p>
+
+    <p>I am not a biologist. I want that on the record before anything else, because everything below is a summary of what I have read, not what I have proven, and a real biologist would put it differently. What I am is someone who is more and more fascinated by how intelligence emerges from simple systems. Not intelligence in the brain sense. The other kind. The kind where nothing in the system is clever and the system is clever anyway.</p>
+
+    <p>I have been going down this rabbit hole for about seven months now, reading about cell signalling. This is my summary of what I have learned. I have tried to keep it high level without making it stupid, which is harder than it sounds, because the honest version of a lot of this is a chain of acronyms and the useless version is "cells talk to each other."</p>
+
+    <p>The thing that keeps pulling me back is that I find the similarities with mechanical engineering very close, and I enjoy that more than I expected to. I should be upfront: that is my lens, not biology's claim. A cell is not a machine that someone designed. But every time I read one of these mechanisms I recognise the shape of it from work, and the recognition is not vague. It is specific enough to be useful.</p>
+
+    <h2>The thing that got me</h2>
+
+    <p>Here is the fact that started it. Take one signal molecule, let it spread out from a source, and let it fade with distance. Every cell reads how much of it is present right where it sits, compares that number to a couple of fixed levels, and becomes a different type of cell depending on which side of those levels it lands on. High means one fate, medium another, low another. That is it. That is how a spinal cord gets its regions.</p>
+
+    <p>No cell is told what to become. No cell knows where it is. There is a concentration, and there are thresholds, and out the other side comes a body plan. The first time I understood that properly I sat there for a while, because I have built that circuit. Everyone who has ever wired a sensor has built that circuit. It is a comparator. You take an analog value, you set your trip points, and you quantise a smooth signal into discrete states. A cell is doing an analog to digital conversion and the output is what kind of cell it is going to be for the rest of its life.</p>
+
+    <h2>What kept happening</h2>
+
+    <p>Then it kept happening. Not once, everywhere.</p>
+
+    <p>A receptor is a lock on the outside of a cell, and the signal is the key. But the interesting part is that a single receptor catching a single molecule does almost nothing. Two of them have to pair up first. Pairing is the switch. That is an interlock: two things have to line up before the circuit closes, so a stray key cannot fire the machine on its own.</p>
+
+    <p>Once it fires, the signal runs down a relay chain and multiplies about a thousand times on the way. That is a gain stage. It is the same reason you put a servo between a joystick and a hydraulic ram. The input is too weak to do work, so you spend energy to amplify it, and the price you pay for the gain is that now you desperately need feedback, because an amplifier with no feedback is just a way to turn a small mistake into a large one. The cell has the feedback. The last stage in the chain reaches back and dampens itself.</p>
+
+    <p>Genes get switched on and off by proteins, and those switches wire into each other as logic. Two inputs required means an AND gate, and it acts as a coincidence detector. Either input will do means an OR gate, and it buys you redundancy, a backup path. This is not a metaphor someone laid on top afterwards. The behaviour is the gate.</p>
+
+    <p>And then the one I like most. A gene can switch itself on. Once it is on, it keeps itself on, so when the original signal fades the state stays. That is a latch. It is an over centre toggle, a relay holding its own coil. It is how a signal that lasts minutes turns into an identity that lasts decades. A neuron stays a neuron for life because something flipped and nothing unflipped it. Memory, built out of nothing but a loop.</p>
+
+    <h2>The parts I did not expect</h2>
+
+    <p>Some of it I would never have guessed, and those are the ones I enjoyed the most.</p>
+
+    <p><strong>Noise.</strong> A gradient is a fuzzy thing. Molecules arrive at random. If a cell sampled it for an instant it would get garbage. So the cell listens for hours and averages. That is a low pass filter. It is debouncing a noisy sensor, and it is the first thing you learn to do when a limit switch chatters.</p>
+
+    <p><strong>Ratios.</strong> Reading one gradient in absolute terms is fragile, because the whole signal can drift. So the cell reads two opposite gradients and takes position from the ratio of the two. That is ratiometric measurement. It is why you use a bridge instead of a single strain gauge: the common error cancels. It also means the pattern still works if the embryo is a different size, which is scaling by a dimensionless ratio, and I do not think I have ever seen it done more elegantly.</p>
+
+    <p><strong>Sharpening.</strong> The cells do not just read the signal, they eat it. Each one pulls the molecule in and destroys it. That steepens the gradient and makes the boundary crisp instead of smeared. It took me a while to see that destroying your own input is a design decision and not a bug.</p>
+
+    <p><strong>Isolation.</strong> Neighbouring cells wire their insides together with real channels, so small molecules and current pass straight through. That is a shared bus, and it is why a heart beats as one piece instead of as a billion arguments. But when a cell is injured, the channels slam shut and seal it off. A fuse. You isolate the fault so it does not take the rest of the system with it.</p>
+
+    <p><strong>Subtraction.</strong> This is my favourite. You did not grow fingers. You grew a paddle, and then the cells in between were told to die, on cue, and the gaps are what is left. Your hand is a machined part. The shape came from removing material, not from adding it.</p>
+
+    <h2>Where it breaks, and why that convinced me</h2>
+
+    <p>What finally sold me on the engineering reading is what happens when it fails, because it fails the way machines fail rather than the way organisms are supposed to fail.</p>
+
+    <p>The master switch in that relay chain can get stuck in the ON position. About a quarter of all cancers are that one switch jammed. The grow signal never turns off. And separately, the brakes on the system can be lost. Stuck accelerator, no brakes. That is not a poetic description of cancer, it is close to the mechanism. When I read that, I stopped thinking of the analogy as an analogy.</p>
+
+    <p>Break the build instructions instead of the growth controls and you do not get a tumour, you get a body assembled wrong. Same system, different failure, and which failure you get depends on which signal you corrupted. That is a fault tree.</p>
+
+    <h2>So what is the intelligence</h2>
+
+    <p>Here is where I land, for now, knowing I am out of my depth.</p>
+
+    <p>There is no controller. There is no cell holding the drawing. Every cell is running a small, local, almost dumb rule: read the concentration here, compare it to a level, add up the inputs, flip a switch, hold the switch. The body is what those rules do when there are thirty seven trillion of them and they can talk. The intelligence is not in the parts. It is in the communication, and that is the whole point. At this scale, life is not a substance, it is a conversation.</p>
+
+    <p>That is the thing I keep chewing on. In mechanical engineering we get intelligent behaviour by making the controller smarter. Biology got it by making the parts talk and letting the behaviour fall out. I do not know what to do with that yet, but I am fairly sure it is the more interesting way round.</p>
+
+    <p>Below is the whole thing as a flowchart. I did not want to give you a PDF to pinch and scroll, so it is built into the page: eight phases, read the teal arrows down. Every block has a plain English line under it, and the lettered circles are jumps, so click one and its twin lights up. It is dense on purpose. That density is the point.</p>
+
+    <hr class="divider">
+
+    <h2 id="flowchart">How cells communicate to build a body</h2>
+
+    <p>A plain language flowchart. Read the teal arrows top to bottom through 8 numbered phases. Every block also has a simple one line explanation in grey italic. A circled letter marks a jump, so find the other circle with the same letter to see where it connects. Black arrows are the steps inside one phase.</p>
+
+    <div class="fc">
+
+      <nav class="fc-index" aria-label="Flowchart phases">
+        <b>PHASES</b>
+        <a href="#fc-1">1 How signalling began</a><span class="sep">·</span>
+        <a href="#fc-2">2 How cells talk</a><span class="sep">·</span>
+        <a href="#fc-3">3 Morphogen gradients</a><span class="sep">·</span>
+        <a href="#fc-4">4 Receptor transduction</a><span class="sep">·</span>
+        <a href="#fc-5">5 Gap junctions</a><span class="sep">·</span>
+        <a href="#fc-6">6 Gene networks and memory</a><span class="sep">·</span>
+        <a href="#fc-7">7 When it fails</a><span class="sep">·</span>
+        <a href="#fc-8">8 Building the body</a>
+      </nav>
+
+      <!-- ── 1 ────────────────────────────────────────────────────── -->
+      <section class="fc-phase" id="fc-1">
+        <header class="fc-phase-head">
+          <span class="fc-phase-num">1</span>
+          <h3 class="fc-phase-title">How signalling began</h3>
+          <p class="fc-phase-sub">~800 million years ago, lone cells learn to cooperate</p>
+        </header>
+
+        <div class="fc-flow">
+          <div class="fc-node fc-terminator">
+            <span class="fc-tag">Start</span>
+            <p class="fc-label">~800 Mya: single celled organisms in shallow seas</p>
+            <p class="fc-gloss">Life was still just lone cells.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node">
+            <p class="fc-label">Daughter cells stay together after division → colonies</p>
+            <p class="fc-gloss">Cells begin living in clumps.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node fc-decision">
+            <span class="fc-tag">Decision</span>
+            <p class="fc-label">Cells compete for the shared food supply?</p>
+            <p class="fc-gloss">Might a selfish cell grab too much?</p>
+          </div>
+
+          <div class="fc-branch">
+            <div class="fc-arm">
+              <span class="fc-arm-label">No</span>
+              <div class="fc-node fc-quiet">
+                <p class="fc-label">The colony stays simple; no signals needed</p>
+                <p class="fc-gloss">If cells never clash, no messages are required.</p>
+              </div>
+            </div>
+            <div class="fc-arm">
+              <span class="fc-arm-label">Yes</span>
+              <div class="fc-node">
+                <p class="fc-label"><b>SIGNALLING</b> evolves to keep the peace (conflict mediation)</p>
+                <p class="fc-gloss">Chemical 'contracts' keep cells cooperating.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-arrow" aria-hidden="true"></div>
+          <div class="fc-node fc-input">
+            <span class="fc-tag">Input</span>
+            <p class="fc-label">first message molecule: cyclic AMP (made from ATP)</p>
+            <p class="fc-gloss">The earliest chemical signal.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node">
+            <p class="fc-label">Slime mould model: starving cells pulse cAMP → neighbours crawl in, relay it → team up into a slug</p>
+            <p class="fc-gloss">Hungry cells call each other and band together.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <p class="fc-note">No cell 'chooses' to sacrifice. Cooperation just emerges from chemistry.</p>
+
+          <div class="fc-arrow" aria-hidden="true"></div>
+          <div class="fc-node">
+            <p class="fc-label">Obligate multicellularity → many new signalling genes</p>
+            <p class="fc-gloss">Now cells can no longer survive alone.</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="fc-arrow fc-arrow-phase" aria-hidden="true"></div>
+
+      <!-- PHASES_2_TO_8 -->
+
+      <section class="fc-phase" id="fc-2">
+        <header class="fc-phase-head">
+          <span class="fc-phase-num">2</span>
+          <h3 class="fc-phase-title">How cells talk: the signalling systems</h3>
+          <p class="fc-phase-sub">the video names four core types, but a cell uses several; the main systems are shown here as blocks</p>
+        </header>
+
+        <div class="fc-flow">
+          <div class="fc-node">
+            <p class="fc-label">A cell must <b>SEND</b> and <b>RECEIVE</b> information</p>
+            <p class="fc-gloss">Cells deep in a body cannot sense the outside directly.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <p class="fc-band">the cell can use ALL of these systems at once</p>
+
+          <div class="fc-grid">
+            <div class="fc-node">
+              <p class="fc-label"><span class="fc-sys-name">Morphogens</span>form gradients</p>
+              <p class="fc-gloss">They tell a cell WHERE it is.</p>
+            </div>
+            <div class="fc-node">
+              <p class="fc-label"><span class="fc-sys-name">Growth factors</span>the divide signal</p>
+              <p class="fc-gloss">They tell a cell WHEN to divide.</p>
+            </div>
+            <div class="fc-node">
+              <p class="fc-label"><span class="fc-sys-name">Cytokines</span>immune messages</p>
+              <p class="fc-gloss">They coordinate the immune system.</p>
+            </div>
+            <div class="fc-node">
+              <p class="fc-label"><span class="fc-sys-name">Gap junctions</span>direct channels</p>
+              <p class="fc-gloss">They wire neighbours together directly.</p>
+            </div>
+            <div class="fc-node">
+              <p class="fc-label"><span class="fc-sys-name">Hormones</span>whole body messages</p>
+              <p class="fc-gloss">Long range signals carried in the blood.</p>
+            </div>
+            <div class="fc-node">
+              <p class="fc-label"><span class="fc-sys-name">Neurotransmitters</span>nerve signals</p>
+              <p class="fc-gloss">Fast messages sent across a synapse.</p>
+            </div>
+            <div class="fc-node">
+              <p class="fc-label"><span class="fc-sys-name">Direct contact</span>Notch and adhesion</p>
+              <p class="fc-gloss">Fate is set by which neighbour a cell touches.</p>
+            </div>
+            <div class="fc-node">
+              <p class="fc-label"><span class="fc-sys-name">Mechanical cues</span>integrins and matrix</p>
+              <p class="fc-gloss">Cells feel physical pull and attachment.</p>
+            </div>
+          </div>
+
+          <div class="fc-arrow" aria-hidden="true"></div>
+          <div class="fc-node">
+            <p class="fc-label">All of these systems <b>CROSS TALK</b> into one living network</p>
+            <p class="fc-gloss">The signals combine, and the cell adds them up like a computer.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <p class="fc-note">Another way to group them, by how far the message travels: autocrine (a cell signals itself), paracrine (to close neighbours), endocrine (through the blood), juxtacrine (only by touch), synaptic (a nerve cell to its target).</p>
+        </div>
+      </section>
+
+      <div class="fc-arrow fc-arrow-phase" aria-hidden="true"></div>
+
+      <section class="fc-phase" id="fc-3">
+        <header class="fc-phase-head">
+          <span class="fc-phase-num">3</span>
+          <h3 class="fc-phase-title">Morphogen gradients and the French flag model</h3>
+          <p class="fc-phase-sub">the strength of ONE signal, split by thresholds, tells each cell what to become</p>
+        </header>
+
+        <div class="fc-flow">
+          <p class="fc-note"><b>ONE morphogen gradient</b> (for example Sonic Hedgehog): every cell reads the local concentration and compares it to fixed thresholds</p>
+
+          <div class="fc-flag">
+            <div class="fc-flag-thresholds" aria-hidden="true">
+              <span><span class="fc-theta">θ</span>1</span>
+              <span><span class="fc-theta">θ</span>2</span>
+            </div>
+            <div class="fc-flag-strip">
+              <div class="fc-flag-band b1">fate A</div>
+              <div class="fc-flag-band b2">fate B</div>
+              <div class="fc-flag-band b3">fate C</div>
+            </div>
+            <div class="fc-flag-axis">
+              <span>HIGH · source</span>
+              <span>LOW · far</span>
+            </div>
+            <p class="fc-flag-rule">above <span class="fc-theta">θ</span>1 gives fate A · between <span class="fc-theta">θ</span>1 and <span class="fc-theta">θ</span>2 gives fate B · below <span class="fc-theta">θ</span>2 gives fate C (Wolpert's French flag model)</p>
+          </div>
+
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-cols">
+            <aside class="fc-aside">
+              <h4 class="fc-aside-title">The developmental FACTORS (neural tube)</h4>
+              <dl class="fc-dl">
+                <dt>High SHH</dt>
+                <dd>→ switches on Nkx2.2 + FoxA2</dd>
+                <dt>Low SHH</dt>
+                <dd>→ switches on Pax6 + Pax7</dd>
+                <dt>Nkx2.2 alone</dt>
+                <dd>vs Nkx2.2 + Olig2 → two different neuron types</dd>
+                <dt>Mutual repression</dt>
+                <dd>these factors switch each other OFF → one sharp boundary</dd>
+              </dl>
+            </aside>
+            <aside class="fc-aside">
+              <h4 class="fc-aside-title">The morphogen TYPES (signal → what it shapes)</h4>
+              <dl class="fc-dl">
+                <dt>Sonic Hedgehog</dt>
+                <dd>belly side of the spinal cord; sets nerve cell types</dd>
+                <dt>BMP / Dpp</dt>
+                <dd>back versus belly; the opposite of Sonic Hedgehog</dd>
+                <dt>Wnt / Wingless</dt>
+                <dd>gut and tissue patterning; hand delivered on cytonemes</dd>
+                <dt>FGF8</dt>
+                <dd>body and limb axis; sticks to the matrix as it spreads</dd>
+                <dt>Bicoid</dt>
+                <dd>head to tail in the fly; read straight by the nuclei</dd>
+                <dt>Cyclic AMP</dt>
+                <dd>slime mould teaming up; the most ancient signal</dd>
+              </dl>
+            </aside>
+          </div>
+
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node">
+            <p class="fc-label">Source cells secrete a morphogen (SHH, BMP, Wnt, FGF8, Bicoid...)</p>
+            <p class="fc-gloss">A few cells release the signal molecule.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node">
+            <p class="fc-label">Production + Diffusion + Degradation → an exponential concentration gradient</p>
+            <p class="fc-gloss">It spreads out and fades with distance.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node">
+            <p class="fc-label">Hindered diffusion: sticks to the heparan sulfate matrix (for example FGF8)</p>
+            <p class="fc-gloss">Sticky scaffold slows it, steadying the gradient.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node">
+            <p class="fc-label">Cells act as <b>SINKS</b>, they pull the morphogen in and destroy it</p>
+            <p class="fc-gloss">Cells 'eat' the signal, sharpening the map.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node fc-document">
+            <span class="fc-tag">Document</span>
+            <p class="fc-label">Result = a positional <b>MAP</b> (Turing: activator + inhibitor)</p>
+            <p class="fc-gloss">A chemical map of the body.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node">
+            <p class="fc-label">Each cell <b>COUNTS</b> its activated receptors → estimates the local concentration</p>
+            <p class="fc-gloss">It measures how strong the signal is here.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node fc-decision">
+            <span class="fc-tag">Decision</span>
+            <p class="fc-label">Concentration vs thresholds <span class="fc-theta">θ</span>1, <span class="fc-theta">θ</span>2?</p>
+            <p class="fc-gloss">Is it high, medium, or low?</p>
+          </div>
+
+          <div class="fc-branch">
+            <div class="fc-arm">
+              <span class="fc-arm-label">HIGH → above <span class="fc-theta">θ</span>1</span>
+              <div class="fc-node fc-output">
+                <span class="fc-tag">Output</span>
+                <p class="fc-label">fate A (ventral neuron)</p>
+              </div>
+            </div>
+            <div class="fc-arm">
+              <span class="fc-arm-label">MEDIUM → between <span class="fc-theta">θ</span>1 and <span class="fc-theta">θ</span>2</span>
+              <div class="fc-node fc-output">
+                <span class="fc-tag">Output</span>
+                <p class="fc-label">fate B (interneuron)</p>
+              </div>
+            </div>
+            <div class="fc-arm">
+              <span class="fc-arm-label">LOW → below <span class="fc-theta">θ</span>2</span>
+              <div class="fc-node fc-output">
+                <span class="fc-tag">Output</span>
+                <p class="fc-label">fate C (dorsal neuron)</p>
+              </div>
+            </div>
+          </div>
+
+          <p class="fc-band">Why it is reliable, turning a fuzzy gradient into sharp, dependable fates</p>
+
+          <div class="fc-grid">
+            <div class="fc-node">
+              <p class="fc-label">Listen for <b>HOURS</b> not for an instant</p>
+              <p class="fc-gloss">Averages out random blips.</p>
+            </div>
+            <div class="fc-node">
+              <p class="fc-label">Two opposite gradients (Sonic Hedgehog versus BMP)</p>
+              <p class="fc-gloss">Position = the RATIO of the two.</p>
+            </div>
+            <div class="fc-node">
+              <p class="fc-label">Feedback keeps it robust &amp; scalable</p>
+              <p class="fc-gloss">Works even if the embryo is bigger.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="fc-arrow fc-arrow-phase" aria-hidden="true"></div>
+
+      <section class="fc-phase" id="fc-4">
+        <header class="fc-phase-head">
+          <span class="fc-phase-num">4</span>
+          <h3 class="fc-phase-title">Receptor signal transduction</h3>
+          <p class="fc-phase-sub">a surface 'lock' catches a signal and AMPLIFIES it into a decision</p>
+        </header>
+
+        <div class="fc-flow">
+          <div class="fc-node fc-input">
+            <span class="fc-tag">Input</span>
+            <p class="fc-label">a signal molecule arrives (for example epidermal growth factor, EGF)</p>
+            <p class="fc-gloss">A messenger lands on the cell surface.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-branch">
+            <div class="fc-arm">
+              <div class="fc-node">
+                <p class="fc-label">It binds the receptor's outside 'lock' (an RTK)</p>
+                <p class="fc-gloss">The key clicks into the lock.</p>
+              </div>
+            </div>
+            <div class="fc-arm">
+              <div class="fc-node">
+                <p class="fc-label"><b>OTHER</b> receptor: GPCR (800+) → G protein → cAMP</p>
+                <p class="fc-gloss">A different receptor type, same idea.</p>
+              </div>
+              <div class="fc-jumps">
+                <span class="fc-jump" data-letter="C">C</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-arrow" aria-hidden="true"></div>
+          <div class="fc-node">
+            <p class="fc-label">Two receptors pair up (<b>DIMERIZE</b>)</p>
+            <p class="fc-gloss">Pairing up is the 'ON' switch.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-branch">
+            <div class="fc-arm">
+              <div class="fc-node">
+                <p class="fc-label">The pair tags itself with phosphates → docking sites</p>
+                <p class="fc-gloss">It puts out 'handles' for helper proteins.</p>
+              </div>
+            </div>
+            <div class="fc-arm">
+              <div class="fc-node">
+                <p class="fc-label">PI3K → AKT branch = keeps the cell <b>ALIVE</b></p>
+                <p class="fc-gloss">A side route blocking cell suicide.</p>
+              </div>
+              <div class="fc-jumps">
+                <span class="fc-jump" data-letter="A">A</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-branch">
+            <div class="fc-arm">
+              <div class="fc-node">
+                <p class="fc-label">Adapters GRB2 + SOS line up on the handles</p>
+                <p class="fc-gloss">Relay proteins assemble.</p>
+              </div>
+            </div>
+            <div class="fc-arm">
+              <div class="fc-node">
+                <p class="fc-label"><b>OTHER</b> receptor: cytokine → JAK → STAT → nucleus</p>
+                <p class="fc-gloss">Immune receptors signal straight to genes.</p>
+              </div>
+              <div class="fc-jumps">
+                <span class="fc-jump" data-letter="D">D</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-branch">
+            <div class="fc-arm">
+              <div class="fc-node">
+                <p class="fc-label">SOS flips the RAS switch: GDP → GTP (now <b>ON</b>)</p>
+                <p class="fc-gloss">The master switch turns ON.</p>
+              </div>
+            </div>
+            <div class="fc-arm">
+              <div class="fc-node">
+                <p class="fc-label">PLCγ branch → calcium (Ca²⁺) + PKC signalling</p>
+                <p class="fc-gloss">Another branch using calcium.</p>
+              </div>
+              <div class="fc-jumps">
+                <span class="fc-jump" data-letter="B">B</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-arrow" aria-hidden="true"></div>
+          <div class="fc-node">
+            <p class="fc-label">Relay RAS→RAF→MEK→ERK amplifies the signal ~1000×</p>
+            <p class="fc-gloss">A chain reaction multiplies the message.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node">
+            <p class="fc-label">ERK activates transcription factors → into the nucleus</p>
+            <p class="fc-gloss">The message finally reaches the genes.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node fc-output">
+            <span class="fc-tag">Output</span>
+            <p class="fc-label">genes change → the cell divides · specialises · or moves</p>
+            <p class="fc-gloss">The cell acts on the message.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-jumps">
+            <span class="fc-jump" data-letter="A">A</span>
+            <span class="fc-jump" data-letter="B">B</span>
+            <span class="fc-jump" data-letter="C">C</span>
+            <span class="fc-jump" data-letter="D">D</span>
+          </div>
+          <p class="fc-jumps-note">these four converge here ↓</p>
+
+          <div class="fc-arrow" aria-hidden="true"></div>
+          <div class="fc-node">
+            <p class="fc-label">The cell <b>INTEGRATES</b> every route it received (A · B · C · D above + mechanical and metabolic cues)</p>
+            <p class="fc-gloss">It adds up ALL the signals to make one decision.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <p class="fc-note">Feedback keeps it in check: ERK dampens itself; timing and duration also carry meaning.</p>
+
+          <div class="fc-arrow" aria-hidden="true"></div>
+          <div class="fc-node fc-decision">
+            <span class="fc-tag">Decision</span>
+            <p class="fc-label">Was the signal a quick pulse or a long hold?</p>
+            <p class="fc-gloss">Timing changes the outcome.</p>
+          </div>
+
+          <div class="fc-branch">
+            <div class="fc-arm">
+              <span class="fc-arm-label">brief pulse</span>
+              <div class="fc-node fc-output">
+                <span class="fc-tag">Output</span>
+                <p class="fc-label">the cell <b>MULTIPLIES</b></p>
+                <p class="fc-gloss">Short pulse → make more cells.</p>
+              </div>
+            </div>
+            <div class="fc-arm">
+              <span class="fc-arm-label">sustained</span>
+              <div class="fc-node fc-output">
+                <span class="fc-tag">Output</span>
+                <p class="fc-label">the cell <b>SPECIALISES</b> (for example neuron)</p>
+                <p class="fc-gloss">Long hold → become a specific type.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="fc-arrow fc-arrow-phase" aria-hidden="true"></div>
+
+      <section class="fc-phase" id="fc-5">
+        <header class="fc-phase-head">
+          <span class="fc-phase-num">5</span>
+          <h3 class="fc-phase-title">Gap junctions</h3>
+          <p class="fc-phase-sub">cells wire their insides together, how a heart beats as one</p>
+        </header>
+
+        <div class="fc-flow">
+          <div class="fc-node">
+            <p class="fc-label">6 connexins make a half tube; the partner cell adds 6 more → a channel</p>
+            <p class="fc-gloss">Two cells build a shared tunnel.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node">
+            <p class="fc-label">The pore is tiny (~1.5 nm): ions &amp; small molecules pass, proteins cannot</p>
+            <p class="fc-gloss">Small stuff flows through; big stuff stays.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node">
+            <p class="fc-label">In the heart (Cx43): one cell fires → electric current jumps to its neighbours</p>
+            <p class="fc-gloss">Electricity passes cell to cell instantly.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <p class="fc-note">Cells can also 'talk' via electric fields alone (ephaptic coupling).</p>
+
+          <div class="fc-arrow" aria-hidden="true"></div>
+          <div class="fc-node fc-output">
+            <span class="fc-tag">Output</span>
+            <p class="fc-label">the whole heart contracts as <b>ONE</b> unit (fast along the fibres)</p>
+            <p class="fc-gloss">This is why your heartbeat is coordinated.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node">
+            <p class="fc-label">Channels are rebuilt constantly (they last only 1 to 5 hours)</p>
+            <p class="fc-gloss">Wiring is retuned on the fly.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <p class="fc-note">Same wiring runs the gut, the womb in labour, brain synapses and early embryos.</p>
+
+          <div class="fc-arrow" aria-hidden="true"></div>
+          <div class="fc-node fc-decision">
+            <span class="fc-tag">Decision</span>
+            <p class="fc-label">Is this cell stressed or injured?</p>
+            <p class="fc-gloss">Low pH / high calcium = trouble.</p>
+          </div>
+
+          <div class="fc-branch">
+            <div class="fc-arm">
+              <span class="fc-arm-label">Yes</span>
+              <div class="fc-node fc-output">
+                <span class="fc-tag">Output</span>
+                <p class="fc-label">channels <b>CLOSE</b> → seal off the damaged cell</p>
+                <p class="fc-gloss">Isolate a dying cell to protect the rest.</p>
+              </div>
+            </div>
+            <div class="fc-arm">
+              <span class="fc-arm-label">No / chronic</span>
+              <div class="fc-node fc-failure">
+                <span class="fc-tag">Disease</span>
+                <p class="fc-label">wiring breaks down → irregular, dangerous heartbeats</p>
+                <p class="fc-gloss">Faulty gap junctions cause arrhythmias.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="fc-arrow fc-arrow-phase" aria-hidden="true"></div>
+
+      <section class="fc-phase" id="fc-6">
+        <header class="fc-phase-head">
+          <span class="fc-phase-num">6</span>
+          <h3 class="fc-phase-title">Gene networks and cellular memory</h3>
+          <p class="fc-phase-sub">how a signal that lasts minutes becomes an identity that lasts a lifetime</p>
+        </header>
+
+        <div class="fc-cols">
+          <aside class="fc-aside">
+            <h4 class="fc-aside-title">The gates (network logic)</h4>
+            <dl class="fc-dl">
+              <dt>AND gate</dt>
+              <dd>needs BOTH inputs → coincidence detector</dd>
+              <dt>OR gate</dt>
+              <dd>either input works → backup / robustness</dd>
+              <dt>Self ON loop</dt>
+              <dd>gene keeps itself ON → MEMORY after signal fades</dd>
+              <dt>Self OFF loop</dt>
+              <dd>gene limits itself → stays balanced</dd>
+              <dt>Mutual OFF</dt>
+              <dd>two genes switch each other off → one clear winner</dd>
+            </dl>
+          </aside>
+          <aside class="fc-aside">
+            <h4 class="fc-aside-title">The biases (what nudges the choice)</h4>
+            <dl class="fc-dl">
+              <dt>Enhancer thresholds</dt>
+              <dd>each gene has its own trigger level</dd>
+              <dt>Opposing gradients</dt>
+              <dd>position = the RATIO of two signals</dd>
+              <dt>Time averaging</dt>
+              <dd>listen over hours → ignore random noise</dd>
+              <dt>Mutual repression</dt>
+              <dd>deepens the chosen state → hard to undo</dd>
+              <dt>Random noise</dt>
+              <dd>signals BIAS the odds, they do not force the result</dd>
+              <dt>Scaling</dt>
+              <dd>a bigger embryo keeps the same pattern</dd>
+            </dl>
+          </aside>
+        </div>
+
+        <div class="fc-flow">
+          <div class="fc-node">
+            <p class="fc-label">Transcription factors bind DNA → switch target genes <b>ON</b> or <b>OFF</b></p>
+            <p class="fc-gloss">Proteins flip genes like light switches.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node">
+            <p class="fc-label">Feedback loops: a gene can keep <b>ITSELF</b> on (or shut itself down)</p>
+            <p class="fc-gloss">A gene can lock in its own 'on' state.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node">
+            <p class="fc-label">Logic <b>GATES</b>, AND (needs both) vs OR (either one will do)</p>
+            <p class="fc-gloss">Cells do simple logic on their inputs.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node">
+            <p class="fc-label">The network settles into a stable 'valley' (Waddington landscape)</p>
+            <p class="fc-gloss">The cell rolls into one fate and stays.</p>
+          </div>
+          <div class="fc-arrow" data-label="reads / stores"></div>
+
+          <div class="fc-node fc-store">
+            <span class="fc-tag">Data store</span>
+            <p class="fc-label"><b>GENOME</b>, same DNA in every cell, many possible programs</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node">
+            <p class="fc-label">Chromatin marks lock the state in → <b>EPIGENETIC</b> memory across divisions</p>
+            <p class="fc-gloss">The choice is remembered for good.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node fc-output">
+            <span class="fc-tag">Output</span>
+            <p class="fc-label">a stable cell identity held for years or decades</p>
+            <p class="fc-gloss">A neuron stays a neuron for life.</p>
+          </div>
+
+          <p class="fc-note"><b>RESET:</b> Yamanaka factors (Oct4, Sox2, Klf4, c Myc) rewind the cell. Force an adult cell back to a stem cell.</p>
+        </div>
+      </section>
+
+      <div class="fc-arrow fc-arrow-phase" aria-hidden="true"></div>
+
+      <section class="fc-phase" id="fc-7">
+        <header class="fc-phase-head">
+          <span class="fc-phase-num">7</span>
+          <h3 class="fc-phase-title">When communication fails</h3>
+          <p class="fc-phase-sub">break the signals → cancer; break the build signals → birth defects</p>
+        </header>
+
+        <div class="fc-flow">
+          <div class="fc-node fc-decision">
+            <span class="fc-tag">Decision</span>
+            <p class="fc-label">Is signalling working correctly?</p>
+            <p class="fc-gloss">Are the cell's controls intact?</p>
+          </div>
+
+          <div class="fc-branch">
+            <div class="fc-arm">
+              <span class="fc-arm-label">No, growth control fails</span>
+              <div class="fc-node">
+                <p class="fc-label">RAS switch <b>JAMMED ON</b> (~25% of all cancers)</p>
+                <p class="fc-gloss">The 'grow' switch will not turn off.</p>
+              </div>
+              <div class="fc-arrow" aria-hidden="true"></div>
+              <div class="fc-node">
+                <p class="fc-label">Too many growth receptors; brakes PTEN / p53 / Rb lost</p>
+                <p class="fc-gloss">Accelerator stuck, brakes gone.</p>
+              </div>
+              <div class="fc-arrow" aria-hidden="true"></div>
+              <div class="fc-node fc-failure">
+                <span class="fc-tag">Failure</span>
+                <p class="fc-label">cells divide out of control → a tumour (cancer)</p>
+                <p class="fc-gloss">Uncontrolled growth = cancer.</p>
+              </div>
+            </div>
+
+            <div class="fc-arm">
+              <span class="fc-arm-label">Yes, control intact</span>
+              <div class="fc-node fc-quiet">
+                <p class="fc-label">Body builds normally</p>
+              </div>
+            </div>
+
+            <div class="fc-arm">
+              <span class="fc-arm-label">No, build signal fails</span>
+              <div class="fc-node">
+                <p class="fc-label">A build instruction signal is mutated during development</p>
+                <p class="fc-gloss">A construction signal is corrupted.</p>
+              </div>
+              <div class="fc-arrow" aria-hidden="true"></div>
+              <div class="fc-node fc-failure">
+                <span class="fc-tag">Failure</span>
+                <p class="fc-label">birth defects (brain, heart, liver…)</p>
+                <p class="fc-gloss">The body forms incorrectly.</p>
+              </div>
+              <p class="fc-note"><b>Examples:</b> Holoprosencephaly (Sonic Hedgehog), CHARGE (CHD7), Alagille (Notch).</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="fc-arrow fc-arrow-phase" aria-hidden="true"></div>
+
+      <section class="fc-phase" id="fc-8">
+        <header class="fc-phase-head">
+          <span class="fc-phase-num">8</span>
+          <h3 class="fc-phase-title">Building and maintaining the body</h3>
+          <p class="fc-phase-sub">the payoff when it all works, and it never stops</p>
+        </header>
+
+        <div class="fc-flow">
+          <div class="fc-node">
+            <p class="fc-label">The egg divides and <b>REGIONALISES</b> (head/tail · back/belly · left/right)</p>
+            <p class="fc-gloss">The body plan gets laid out.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node">
+            <p class="fc-label">Cells crawl along gradients; sheets <b>FOLD</b> into tubes</p>
+            <p class="fc-gloss">Parts move and fold into shape.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node">
+            <p class="fc-label">Programmed cell death (<b>APOPTOSIS</b>) carves the gaps, for example your fingers</p>
+            <p class="fc-gloss">Cells die on cue to sculpt the body.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node fc-output">
+            <span class="fc-tag">Output</span>
+            <p class="fc-label">a newborn: ~26 billion cells, 200+ types, a wired brain</p>
+            <p class="fc-gloss">A complete body, built by signals.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node">
+            <p class="fc-label"><b>MAINTENANCE</b> never stops: skin and gut renew, wounds heal, immune patrol, memories form</p>
+            <p class="fc-gloss">The same signals keep repairing you for life.</p>
+          </div>
+          <div class="fc-arrow" aria-hidden="true"></div>
+
+          <div class="fc-node fc-terminator">
+            <span class="fc-tag">End</span>
+            <p class="fc-label">at this scale, life IS communication, molecules → meaning, chaos → a living body</p>
+            <p class="fc-gloss">You are a conversation between 37 trillion cells.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- /PHASES_2_TO_8 -->
+
+      <section class="fc-legend" aria-labelledby="fc-legend-title">
+        <h3 class="fc-legend-title" id="fc-legend-title">Legend: what each shape and arrow means</h3>
+        <div class="fc-legend-grid">
+          <div class="fc-legend-item">
+            <span class="fc-swatch s-terminator" aria-hidden="true"></span>
+            <p><b>Oval, start / end</b><span>Where a flow begins or finishes.</span></p>
+          </div>
+          <div class="fc-legend-item">
+            <span class="fc-swatch" aria-hidden="true"></span>
+            <p><b>Rectangle, a step</b><span>One action the cell takes.</span></p>
+          </div>
+          <div class="fc-legend-item">
+            <span class="fc-swatch s-decision" aria-hidden="true"></span>
+            <p><b>Diamond, a decision</b><span>A yes/no or high/low question.</span></p>
+          </div>
+          <div class="fc-legend-item">
+            <span class="fc-swatch s-input" aria-hidden="true"></span>
+            <p><b>Blue, INPUT</b><span>A signal the cell RECEIVES.</span></p>
+          </div>
+          <div class="fc-legend-item">
+            <span class="fc-swatch s-output" aria-hidden="true"></span>
+            <p><b>Neon yellow, OUTPUT</b><span>A signal or product the cell PRODUCES.</span></p>
+          </div>
+          <div class="fc-legend-item">
+            <span class="fc-swatch s-failure" aria-hidden="true"></span>
+            <p><b>Red oval, failure</b><span>A disease or defect outcome.</span></p>
+          </div>
+          <div class="fc-legend-item">
+            <span class="fc-swatch s-store" aria-hidden="true"></span>
+            <p><b>Cylinder, data store</b><span>Where information is kept (the genome).</span></p>
+          </div>
+          <div class="fc-legend-item">
+            <span class="fc-swatch" aria-hidden="true"></span>
+            <p><b>Document</b><span>An information sheet (the positional map).</span></p>
+          </div>
+          <div class="fc-legend-item">
+            <span class="fc-swatch s-teal" aria-hidden="true"></span>
+            <p><b>Teal arrow, next phase</b><span>Carries the story from one numbered phase to the next.</span></p>
+          </div>
+          <div class="fc-legend-item">
+            <span class="fc-swatch s-arrow" aria-hidden="true"></span>
+            <p><b>Arrow, flow</b><span>Follow the arrow to the next step.</span></p>
+          </div>
+          <div class="fc-legend-item">
+            <span class="fc-jump" aria-hidden="true">A</span>
+            <p><b>Lettered circle, a jump</b><span>Two circles with the SAME letter are joined, which saves a long line. Click one to light up its twin.</span></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="fc-glossary" aria-labelledby="fc-glossary-title">
+        <h3 class="fc-glossary-title" id="fc-glossary-title">Glossary: every term in plain English</h3>
+        <div class="fc-glossary-grid">
+          <p class="fc-term"><b>Morphogen</b><span>A signal that spreads out in a gradient; its strength tells a cell where it is.</span></p>
+          <p class="fc-term"><b>Gradient</b><span>Strong near the source, weaker far away, a chemical map of position.</span></p>
+          <p class="fc-term"><b>Threshold (<span class="fc-theta">θ</span>)</b><span>A trigger level: cross it and the cell switches to a different fate.</span></p>
+          <p class="fc-term"><b>Ligand</b><span>The signal molecule that fits into a receptor, like a key in a lock.</span></p>
+          <p class="fc-term"><b>Receptor / RTK</b><span>The surface 'lock' that catches a signal and starts the response.</span></p>
+          <p class="fc-term"><b>Dimerize</b><span>Two receptors pairing up, the switch that turns them on.</span></p>
+          <p class="fc-term"><b>RAS → RAF → MEK → ERK</b><span>A relay chain (MAPK) that multiplies a weak signal into a strong one.</span></p>
+          <p class="fc-term"><b>PI3K / AKT</b><span>A parallel branch that keeps the cell alive.</span></p>
+          <p class="fc-term"><b>GPCR / JAK STAT</b><span>Other receptor families that also feed signals into the cell.</span></p>
+          <p class="fc-term"><b>Transcription factor</b><span>A protein that switches genes on or off.</span></p>
+          <p class="fc-term"><b>Logic gate (AND/OR)</b><span>How a cell combines two inputs to make a yes/no call.</span></p>
+          <p class="fc-term"><b>Attractor / valley</b><span>A stable, self holding state of the gene network, a cell fate.</span></p>
+          <p class="fc-term"><b>Epigenetic memory</b><span>DNA packaging marks that keep a cell's identity locked in.</span></p>
+          <p class="fc-term"><b>Yamanaka factors</b><span>Four proteins that reset an adult cell back to a stem cell.</span></p>
+          <p class="fc-term"><b>Apoptosis</b><span>Programmed cell death, for example carving the gaps between fingers.</span></p>
+          <p class="fc-term"><b>Sonic Hedgehog / BMP</b><span>Two opposite morphogens that pattern the developing spinal cord.</span></p>
+          <p class="fc-term"><b>Gap junction / connexin</b><span>A channel, built of connexins, that joins two cells' insides.</span></p>
+        </div>
+      </section>
+
+      <p class="fc-source">Adapted from the Omni video essay "How Do Cells Communicate to Build Complex Organisms?" · ANSI / ISO flowchart notation · rebuilt for this page, 15 July 2026</p>
+
+    </div>
+
+    <hr class="divider">
+
+    <p><a href="/random-blogging.html">← Back to the blog</a></p>
+
+    <p>Last meaningful edit: 15 July 2026.</p>
+  </main>
+
+  <script>
+  /* Connector jumps. A lettered circle is one end of a line that would have been
+     too long to draw, so light up both ends and carry the reader to the twin. */
+  (function () {
+    var jumps = Array.prototype.slice.call(document.querySelectorAll('.fc-jump[data-letter]'));
+    if (!jumps.length) return;
+    var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function mates(letter) {
+      return jumps.filter(function (j) { return j.getAttribute('data-letter') === letter; });
+    }
+    function clear() { jumps.forEach(function (j) { j.classList.remove('lit'); }); }
+
+    jumps.forEach(function (j) {
+      var letter = j.getAttribute('data-letter');
+      j.tabIndex = 0;
+      j.setAttribute('role', 'button');
+      j.setAttribute('aria-label', 'Connector ' + letter + ', jump to the other circle ' + letter);
+
+      function light() { clear(); mates(letter).forEach(function (m) { m.classList.add('lit'); }); }
+      function jump() {
+        light();
+        var other = mates(letter).filter(function (m) { return m !== j; })[0];
+        if (other) other.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'center' });
+      }
+
+      j.addEventListener('mouseenter', light);
+      j.addEventListener('focus', light);
+      j.addEventListener('click', jump);
+      j.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); jump(); }
+      });
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.fc-jump')) clear();
+    });
+  })();
+  </script>
+
+  <footer class="site-footer">
+    <p class="site-footer-links">
+      <a href="https://hanomi.ai">Hanomi</a><span class="sep">·</span>
+      <a href="https://s-hawk.com">S-Hawk</a><span class="sep">·</span>
+      <a href="https://www.linkedin.com/in/marco-mascolo/">LinkedIn</a><span class="sep">·</span>
+      <a href="https://x.com/_marco_masc">X</a><span class="sep">·</span>
+      <a href="/manifesto.html">Manifesto</a><span class="sep">·</span>
+      <a href="mailto:marco.mascolo.job@gmail.com">marco.mascolo.job@gmail.com</a>
+    </p>
+    <p class="site-footer-meta">
+      &copy; 2026 marco mascolo<span class="sep">·</span>MADE IN ITALY<span class="sep">·</span>BUILDING IN SAN FRANCISCO
+    </p>
+  </footer>
+</body>
+</html>
