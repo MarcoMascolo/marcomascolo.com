@@ -214,7 +214,73 @@
   white-space: nowrap;
 }
 
+/* ── taps: things that hang off the spine ────────────────────────── */
+/* The spine is the argument. It runs down the centre of the column, unbroken,
+   and every arrow sits on it. Anything that is not a step on that spine (a side
+   route the signal can also take, a remark about the step above) hangs off it
+   to the right rather than being spliced into it. Splicing a remark between two
+   arrows draws it as a step, which is a lie about what it is. And running the
+   spine down one grid column while the arrows centre on the whole width leaves
+   every arrow floating in the gutter, pointing at nothing. */
+.fc-tap {
+  position: relative;
+  padding: 0.7rem 0 0.7rem calc(50% + 1.5rem);
+  min-height: 2.4rem;
+}
+.fc-tap::before {                 /* the spine, carrying straight on through */
+  content: "";
+  position: absolute;
+  left: 50%; top: 0; bottom: 0;
+  width: 1px;
+  margin-left: -0.5px;
+  background: var(--fc-ink);
+}
+.fc-tap::after {                  /* the reach out to whatever hangs here */
+  content: "";
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 1.5rem; height: 1px;
+  background: var(--fc-ink);
+  opacity: 0.45;
+}
+/* Sits above whatever hangs here, not on the reach: at this size a word like
+   "sustained" would run straight under the box and get clipped. */
+.fc-tap-label {
+  display: block;
+  margin: 0 0 0.3rem;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fc-teal);
+}
+/* A side route: real, but not the road we are following. */
+.fc-tap > .fc-node {
+  border-style: dashed;
+  background: #fcfcfc;
+}
+.fc-tap > .fc-node .fc-label { font-size: 0.88rem; }
+.fc-tap > .fc-node .fc-gloss { font-size: 0.76rem; }
+/* A remark, not a step: no box at all, just the aside. */
+.fc-tap > .fc-note {
+  border-left: 0;
+  padding: 0;
+  font-size: 0.82rem;
+}
+.fc-tap > .fc-jumps { justify-content: flex-start; margin: 0.4rem 0 0; }
+
+@media (max-width: 700px) {
+  /* No room for a column and a half. The tap steps in from the spine instead. */
+  .fc-tap { padding-left: 1.7rem; }
+  .fc-tap::before { left: 0.3rem; }
+  .fc-tap::after { left: 0.3rem; width: 1.1rem; }
+  .fc-tap-label { left: 0.6rem; }
+}
+
 /* ── branching ───────────────────────────────────────────────────── */
+/* Only for a real fork: outcomes that all end here. If one path carries on, it
+   stays on the spine and the others hang off it as taps. */
 
 .fc-branch {
   display: grid;

@@ -84,7 +84,12 @@
       palette: 'warm', satBoost: 2.6, tint: 0.85, gain: 1.35,
       // How long the static takes to tune into the true type, before the
       // resolve takes over and carries it to the photo.
-      morph: 900
+      morph: 900,
+      // The plate answers to movement, not to presence. Hold still and it lets
+      // go: idleHold ms of stillness, then it fades out over idleFade.
+      idleHold: 500, idleFade: 700,
+      // How far the type is allowed to spill past the edge of the picture.
+      bleed: 16
     }, opts || {});
     // Capped harder than the lab page: these run many at a time on a real page.
     this.dpr = Math.min(window.devicePixelRatio || 1, 1.25);
@@ -119,14 +124,23 @@
     var w = this.host.clientWidth, h = this.host.clientHeight;
     if (!h && this.img) h = Math.round(w * this.img.naturalHeight / Math.max(1, this.img.naturalWidth));
     if (!w || !h) return false;
-    var W = Math.max(1, Math.round(w * this.dpr));
-    var H = Math.max(1, Math.round(h * this.dpr));
+    // The canvas is deliberately bigger than the picture. The picture occupies
+    // the middle; the margin around it is where the type is allowed to spill
+    // out past the edge. Nothing is drawn out there unless the cursor reaches
+    // for it, so at rest the plate is exactly the size of the photo.
+    var b = this.o.bleed || 0;
+    this.B = Math.round(b * this.dpr);
+    var W = Math.max(1, Math.round((w + b * 2) * this.dpr));
+    var H = Math.max(1, Math.round((h + b * 2) * this.dpr));
     this.W = W; this.H = H;
     // Assigning width or height reallocates the backing store and wipes the
     // canvas, so only do it when the size actually moved. The noise loop calls
     // through here several times a second.
     if (this.cv.width !== W) this.cv.width = W;
     if (this.cv.height !== H) this.cv.height = H;
+    var st = this.cv.style;
+    st.left = -b + 'px'; st.top = -b + 'px';
+    st.width = (w + b * 2) + 'px'; st.height = (h + b * 2) + 'px';
     return true;
   };
 
@@ -135,11 +149,16 @@
     for (var i = 0, k = ['photo', 'field', 'tmp']; i < k.length; i++) {
       this[k[i]].width = W; this[k[i]].height = H;
     }
+    var B = this.B || 0;
+    var inW = W - B * 2, inH = H - B * 2;          // the picture itself
     var p = this.photo.getContext('2d');
     var iw = this.img.naturalWidth, ih = this.img.naturalHeight;
-    var s = Math.max(W / iw, H / ih);              // cover, same as the CSS above it
+    var s = Math.max(inW / iw, inH / ih);          // cover, same as the CSS above it
     p.clearRect(0, 0, W, H);
-    p.drawImage(this.img, (W - iw * s) / 2, (H - ih * s) / 2, iw * s, ih * s);
+    p.save();
+    p.beginPath(); p.rect(B, B, inW, inH); p.clip();   // the photo never spills; only type does
+    p.drawImage(this.img, B + (inW - iw * s) / 2, B + (inH - ih * s) / 2, iw * s, ih * s);
+    p.restore();
 
     this.grid();
     var cw = this.cw, cols = this.cols, rows = this.rows;
@@ -156,6 +175,28 @@
       this.tainted = true; this.ready = true;
       this.ctx.drawImage(this.photo, 0, 0);
       return;
+    }
+
+    // The margin has no picture in it, so each cell out there borrows the
+    // nearest real one. The type that spills past the edge then carries the
+    // colour and weight of the edge it spilled from, which is what makes it
+    // read as the picture leaking rather than as noise stuck to the outside.
+    var cb = Math.max(0, Math.ceil(B / cw));
+    this.isBleed = new Uint8Array(cols * rows);
+    this.leak = new Uint8Array(cols * rows);
+    if (cb > 0 && cols - cb > cb && rows - cb > cb) {
+      for (var by = 0; by < rows; by++) for (var bx = 0; bx < cols; bx++) {
+        var ex = Math.min(cols - 1 - cb, Math.max(cb, bx));
+        var ey = Math.min(rows - 1 - cb, Math.max(cb, by));
+        if (ex === bx && ey === by) continue;
+        var bi = by * cols + bx;
+        this.isBleed[bi] = 1;
+        // Not every cell leaks. All of them would draw a solid frame, which
+        // reads as a border. A scattered half reads as the edge coming apart.
+        this.leak[bi] = Math.random() < 0.5 ? 1 : 0;
+        var si = (ey * cols + ex) * 4, di = bi * 4;
+        d[di] = d[si]; d[di + 1] = d[si + 1]; d[di + 2] = d[si + 2]; d[di + 3] = 255;
+      }
     }
 
     // The character fields. Glyphs have to change under the cursor and a single
@@ -178,15 +219,25 @@
       var cv = v === 0 ? this.field : document.createElement('canvas');
       cv.width = W; cv.height = H;
       var c = cv.getContext('2d');
-      c.clearRect(0, 0, W, H); c.fillStyle = '#000'; c.fillRect(0, 0, W, H);
+      c.clearRect(0, 0, W, H);
+      // Black behind the picture only. The margin stays transparent, so the
+      // page shows through it and the few cells that do leak sit out there on
+      // their own instead of inside a black frame.
+      c.fillStyle = '#000'; c.fillRect(B, B, inW, inH);
       c.font = '700 ' + cw + 'px ' + fam;
       c.textAlign = 'center'; c.textBaseline = 'middle';
       var gw = c.measureText('M').width || cw * 0.6, sx = cw / gw;
 
       for (var y = 0; y < rows; y++) for (var x = 0; x < cols; x++) {
-        var i2 = (y * cols + x) * 4, r = d[i2], g = d[i2 + 1], b = d[i2 + 2];
+        var ci = y * cols + x;
+        var i2 = ci * 4, r = d[i2], g = d[i2 + 1], b = d[i2 + 2];
         var L = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
-        if (v === 0) lum[y * cols + x] = L;
+        if (v === 0) lum[ci] = L;
+        if (this.isBleed[ci]) {
+          if (!this.leak[ci]) continue;                 // this one does not spill
+          c.globalAlpha = 1; c.fillStyle = '#000';
+          c.fillRect(x * cw, y * cw, cw, cw);           // its own ground, out in the margin
+        }
         c.globalAlpha = o.tileOpacity;
         c.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
         c.fillRect(x * cw, y * cw, cw, cw);
@@ -277,8 +328,15 @@
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     var gw = ctx.measureText('M').width || cw * 0.6, sx = cw / gw;
 
+    var B = this.B || 0;
     for (var y = 0; y < rows; y++) for (var x = 0; x < cols; x++) {
       var i = y * cols + x;
+      // The margin is for spill under the cursor, nothing else. Filling it here
+      // would load every picture inside a frame of static.
+      if (B) {
+        var mx = x * cw + cw / 2, my = y * cw + cw / 2;
+        if (mx < B || mx > W - B || my < B || my > H - B) continue;
+      }
       // Weighted toward the sparse end of the ramp: a flat draw fills every
       // cell and reads as a solid block rather than as type.
       var rl = Math.random() * Math.random();
@@ -356,8 +414,14 @@
     var pos = function (e) {
       var r = self.cv.getBoundingClientRect();
       if (!r.width || !r.height) return;
-      self.mx = (e.clientX - r.left) / r.width * self.W;
-      self.my = (e.clientY - r.top) / r.height * self.H;
+      var nx = (e.clientX - r.left) / r.width * self.W;
+      var ny = (e.clientY - r.top) / r.height * self.H;
+      // Only a real move counts. Browsers fire mousemove for scrolls and
+      // sub-pixel jitter under a parked hand, which would keep it awake forever.
+      if (Math.abs(nx - self.mx) > 0.5 || Math.abs(ny - self.my) > 0.5) {
+        self.lastMove = performance.now();
+      }
+      self.mx = nx; self.my = ny;
       self.inside = true; self.host.classList.add('touched'); self.kick();
     };
     if (window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches) {
@@ -405,9 +469,20 @@
     var R = o.radius * this.dpr;
     var decay = o.trail > 0 ? Math.exp(-dt / (o.trail / 1000)) : 0;
     var heat = this.heat, rank = this.rank;
-    var busy = this.resolving || this.inside, peak = 0;
 
-    var tick = Math.floor(performance.now() / 1000 * o.churnHz);
+    // A parked cursor should not hold the type up forever. After idleHold of
+    // stillness the plate stops answering and lets go over idleFade, so the
+    // effect belongs to movement rather than to presence. Note that busy drops
+    // once wake hits zero and the heat is gone: without that the loop would
+    // spin at full rate under a hand that had stopped moving.
+    var now = performance.now();
+    var still = (now - (this.lastMove || 0)) / 1000;
+    var wake = still <= o.idleHold / 1000 ? 1
+      : Math.max(0, 1 - (still - o.idleHold / 1000) / (o.idleFade / 1000));
+    var awake = this.inside && wake > 0;
+    var busy = this.resolving || awake, peak = 0;
+
+    var tick = Math.floor(now / 1000 * o.churnHz);
 
     for (var v = 0; v < NV; v++) {
       var dm = this.mids[v].data;
@@ -418,15 +493,18 @@
       var cy = y * cw + cw / 2;
       for (var x = 0; x < cols; x++) {
         var i2 = y * cols + x;
-        // Resolve term: detail ordered, falls to zero and stays there.
+        // Resolve term: detail ordered, falls to zero and stays there. The
+        // margin sits it out: on load the plate must be exactly the size of the
+        // photo, so only a cursor reaching for the edge ever spills type past it.
         var r = o.invert ? 1 - rank[i2] : rank[i2];
-        var res = 1 - smooth((f - r) / fe);
-        // Cursor term: gaussian around the pointer, decaying behind it.
+        var res = this.isBleed[i2] ? 0 : 1 - smooth((f - r) / fe);
+        // Cursor term: gaussian around the pointer, decaying behind it, and
+        // scaled by how awake the plate still is.
         var inf = 0;
-        if (this.inside) {
+        if (awake) {
           var dx = (x * cw + cw / 2) - this.mx, dy = cy - this.my;
           var q = (dx * dx + dy * dy) / (R * R);
-          inf = q < 4 ? Math.exp(-q * 2.2) : 0;
+          inf = q < 4 ? Math.exp(-q * 2.2) * wake : 0;
         }
         // Pure exponential decay approaches zero asymptotically, so the loop
         // idles for ~5 time constants on heat nobody can see. A small linear

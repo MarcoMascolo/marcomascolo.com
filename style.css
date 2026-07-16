@@ -583,6 +583,12 @@ pre { background: #ffffff; padding: 0.8rem 1rem; overflow-x: auto; border-left: 
      the pointer on the host, so the canvas does not need them itself. */
   pointer-events: none;
   image-rendering: auto;
+  /* The canvas is wider than its picture: the surplus is where the type spills
+     out past the edge. That spill has to out-paint main, which is positioned at
+     z-index 1 with a white background and begins exactly at the banner's bottom
+     edge, so at auto it would quietly white the whole leak out. Inside main this
+     stays local, because main is itself a stacking context. */
+  z-index: 2;
 }
 /* opacity, not visibility: the canvas is aria-hidden, so hiding the image the
    other way would strip its alt text out of the accessibility tree and leave

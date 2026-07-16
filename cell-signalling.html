@@ -15,9 +15,9 @@
   <meta property="og:type" content="article">
   <meta name="twitter:card" content="summary_large_image">
   <script>/* CYCLE DISABLED */</script>
-  <link rel="stylesheet" href="/style.css?v=11">
-  <link rel="stylesheet" href="/assets/flowchart.css?v=2">
-  <script src="/assets/detail-plate.js?v=4" defer></script>
+  <link rel="stylesheet" href="/style.css?v=12">
+  <link rel="stylesheet" href="/assets/flowchart.css?v=3">
+  <script src="/assets/detail-plate.js?v=5" defer></script>
   <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
@@ -158,25 +158,21 @@
             <p class="fc-label">Cells compete for the shared food supply?</p>
             <p class="fc-gloss">Might a selfish cell grab too much?</p>
           </div>
-
-          <div class="fc-branch">
-            <div class="fc-arm">
-              <span class="fc-arm-label">No</span>
-              <div class="fc-node fc-quiet">
-                <p class="fc-label">The colony stays simple; no signals needed</p>
-                <p class="fc-gloss">If cells never clash, no messages are required.</p>
-              </div>
-            </div>
-            <div class="fc-arm">
-              <span class="fc-arm-label">Yes</span>
-              <div class="fc-node">
-                <p class="fc-label"><b>SIGNALLING</b> evolves to keep the peace (conflict mediation)</p>
-                <p class="fc-gloss">Chemical 'contracts' keep cells cooperating.</p>
-              </div>
+          <div class="fc-tap">
+            <span class="fc-tap-label">No</span>
+            <div class="fc-node fc-quiet">
+              <p class="fc-label">The colony stays simple; no signals needed</p>
+              <p class="fc-gloss">If cells never clash, no messages are required.</p>
             </div>
           </div>
+          <div class="fc-arrow" data-label="Yes"></div>
 
+          <div class="fc-node">
+            <p class="fc-label"><b>SIGNALLING</b> evolves to keep the peace (conflict mediation)</p>
+            <p class="fc-gloss">Chemical 'contracts' keep cells cooperating.</p>
+          </div>
           <div class="fc-arrow" aria-hidden="true"></div>
+
           <div class="fc-node fc-input">
             <span class="fc-tag">Input</span>
             <p class="fc-label">first message molecule: cyclic AMP (made from ATP)</p>
@@ -188,11 +184,11 @@
             <p class="fc-label">Slime mould model: starving cells pulse cAMP → neighbours crawl in, relay it → team up into a slug</p>
             <p class="fc-gloss">Hungry cells call each other and band together.</p>
           </div>
+          <div class="fc-tap">
+            <p class="fc-note">No cell 'chooses' to sacrifice. Cooperation just emerges from chemistry.</p>
+          </div>
           <div class="fc-arrow" aria-hidden="true"></div>
 
-          <p class="fc-note">No cell 'chooses' to sacrifice. Cooperation just emerges from chemistry.</p>
-
-          <div class="fc-arrow" aria-hidden="true"></div>
           <div class="fc-node">
             <p class="fc-label">Obligate multicellularity → many new signalling genes</p>
             <p class="fc-gloss">Now cells can no longer survive alone.</p>
@@ -260,9 +256,9 @@
             <p class="fc-label">All of these systems <b>CROSS TALK</b> into one living network</p>
             <p class="fc-gloss">The signals combine, and the cell adds them up like a computer.</p>
           </div>
-          <div class="fc-arrow" aria-hidden="true"></div>
-
-          <p class="fc-note">Another way to group them, by how far the message travels: autocrine (a cell signals itself), paracrine (to close neighbours), endocrine (through the blood), juxtacrine (only by touch), synaptic (a nerve cell to its target).</p>
+          <div class="fc-tap">
+            <p class="fc-note">Another way to group them, by how far the message travels: autocrine (a cell signals itself), paracrine (to close neighbours), endocrine (through the blood), juxtacrine (only by touch), synaptic (a nerve cell to its target).</p>
+          </div>
         </div>
       </section>
 
@@ -294,8 +290,6 @@
             </div>
             <p class="fc-flag-rule">above <span class="fc-theta">θ</span>1 gives fate A · between <span class="fc-theta">θ</span>1 and <span class="fc-theta">θ</span>2 gives fate B · below <span class="fc-theta">θ</span>2 gives fate C (Wolpert's French flag model)</p>
           </div>
-
-          <div class="fc-arrow" aria-hidden="true"></div>
 
           <div class="fc-cols">
             <aside class="fc-aside">
@@ -329,8 +323,6 @@
               </dl>
             </aside>
           </div>
-
-          <div class="fc-arrow" aria-hidden="true"></div>
 
           <div class="fc-node">
             <p class="fc-label">Source cells secrete a morphogen (SHH, BMP, Wnt, FGF8, Bicoid...)</p>
@@ -435,90 +427,64 @@
           </div>
           <div class="fc-arrow" aria-hidden="true"></div>
 
-          <div class="fc-branch">
-            <div class="fc-arm">
-              <div class="fc-node">
-                <p class="fc-label">It binds the receptor's outside 'lock' (an RTK)</p>
-                <p class="fc-gloss">The key clicks into the lock.</p>
-              </div>
-            </div>
-            <div class="fc-arm">
-              <div class="fc-node">
-                <p class="fc-label"><b>OTHER</b> receptor: GPCR (800+) → G protein → cAMP</p>
-                <p class="fc-gloss">A different receptor type, same idea.</p>
-              </div>
-              <div class="fc-jumps">
-                <span class="fc-jump" data-letter="C">C</span>
-              </div>
-            </div>
+          <div class="fc-node">
+            <p class="fc-label">It binds the receptor's outside 'lock' (an RTK)</p>
+            <p class="fc-gloss">The key clicks into the lock.</p>
           </div>
-
+          <div class="fc-tap">
+            <div class="fc-node">
+              <p class="fc-label"><b>OTHER</b> receptor: GPCR (800+) → G protein → cAMP</p>
+              <p class="fc-gloss">A different receptor type, same idea.</p>
+            </div>
+            <div class="fc-jumps"><span class="fc-jump" data-letter="C">C</span></div>
+          </div>
           <div class="fc-arrow" aria-hidden="true"></div>
+
           <div class="fc-node">
             <p class="fc-label">Two receptors pair up (<b>DIMERIZE</b>)</p>
             <p class="fc-gloss">Pairing up is the 'ON' switch.</p>
           </div>
           <div class="fc-arrow" aria-hidden="true"></div>
 
-          <div class="fc-branch">
-            <div class="fc-arm">
-              <div class="fc-node">
-                <p class="fc-label">The pair tags itself with phosphates → docking sites</p>
-                <p class="fc-gloss">It puts out 'handles' for helper proteins.</p>
-              </div>
-            </div>
-            <div class="fc-arm">
-              <div class="fc-node">
-                <p class="fc-label">PI3K → AKT branch = keeps the cell <b>ALIVE</b></p>
-                <p class="fc-gloss">A side route blocking cell suicide.</p>
-              </div>
-              <div class="fc-jumps">
-                <span class="fc-jump" data-letter="A">A</span>
-              </div>
-            </div>
+          <div class="fc-node">
+            <p class="fc-label">The pair tags itself with phosphates → docking sites</p>
+            <p class="fc-gloss">It puts out 'handles' for helper proteins.</p>
           </div>
-
+          <div class="fc-tap">
+            <div class="fc-node">
+              <p class="fc-label">PI3K → AKT branch = keeps the cell <b>ALIVE</b></p>
+              <p class="fc-gloss">A side route blocking cell suicide.</p>
+            </div>
+            <div class="fc-jumps"><span class="fc-jump" data-letter="A">A</span></div>
+          </div>
           <div class="fc-arrow" aria-hidden="true"></div>
 
-          <div class="fc-branch">
-            <div class="fc-arm">
-              <div class="fc-node">
-                <p class="fc-label">Adapters GRB2 + SOS line up on the handles</p>
-                <p class="fc-gloss">Relay proteins assemble.</p>
-              </div>
-            </div>
-            <div class="fc-arm">
-              <div class="fc-node">
-                <p class="fc-label"><b>OTHER</b> receptor: cytokine → JAK → STAT → nucleus</p>
-                <p class="fc-gloss">Immune receptors signal straight to genes.</p>
-              </div>
-              <div class="fc-jumps">
-                <span class="fc-jump" data-letter="D">D</span>
-              </div>
-            </div>
+          <div class="fc-node">
+            <p class="fc-label">Adapters GRB2 + SOS line up on the handles</p>
+            <p class="fc-gloss">Relay proteins assemble.</p>
           </div>
-
+          <div class="fc-tap">
+            <div class="fc-node">
+              <p class="fc-label"><b>OTHER</b> receptor: cytokine → JAK → STAT → nucleus</p>
+              <p class="fc-gloss">Immune receptors signal straight to genes.</p>
+            </div>
+            <div class="fc-jumps"><span class="fc-jump" data-letter="D">D</span></div>
+          </div>
           <div class="fc-arrow" aria-hidden="true"></div>
 
-          <div class="fc-branch">
-            <div class="fc-arm">
-              <div class="fc-node">
-                <p class="fc-label">SOS flips the RAS switch: GDP → GTP (now <b>ON</b>)</p>
-                <p class="fc-gloss">The master switch turns ON.</p>
-              </div>
-            </div>
-            <div class="fc-arm">
-              <div class="fc-node">
-                <p class="fc-label">PLCγ branch → calcium (Ca²⁺) + PKC signalling</p>
-                <p class="fc-gloss">Another branch using calcium.</p>
-              </div>
-              <div class="fc-jumps">
-                <span class="fc-jump" data-letter="B">B</span>
-              </div>
-            </div>
+          <div class="fc-node">
+            <p class="fc-label">SOS flips the RAS switch: GDP → GTP (now <b>ON</b>)</p>
+            <p class="fc-gloss">The master switch turns ON.</p>
           </div>
-
+          <div class="fc-tap">
+            <div class="fc-node">
+              <p class="fc-label">PLCγ branch → calcium (Ca²⁺) + PKC signalling</p>
+              <p class="fc-gloss">Another branch using calcium.</p>
+            </div>
+            <div class="fc-jumps"><span class="fc-jump" data-letter="B">B</span></div>
+          </div>
           <div class="fc-arrow" aria-hidden="true"></div>
+
           <div class="fc-node">
             <p class="fc-label">Relay RAS→RAF→MEK→ERK amplifies the signal ~1000×</p>
             <p class="fc-gloss">A chain reaction multiplies the message.</p>
@@ -545,17 +511,17 @@
             <span class="fc-jump" data-letter="D">D</span>
           </div>
           <p class="fc-jumps-note">these four converge here ↓</p>
-
           <div class="fc-arrow" aria-hidden="true"></div>
+
           <div class="fc-node">
             <p class="fc-label">The cell <b>INTEGRATES</b> every route it received (A · B · C · D above + mechanical and metabolic cues)</p>
             <p class="fc-gloss">It adds up ALL the signals to make one decision.</p>
           </div>
+          <div class="fc-tap">
+            <p class="fc-note">Feedback keeps it in check: ERK dampens itself; timing and duration also carry meaning.</p>
+          </div>
           <div class="fc-arrow" aria-hidden="true"></div>
 
-          <p class="fc-note">Feedback keeps it in check: ERK dampens itself; timing and duration also carry meaning.</p>
-
-          <div class="fc-arrow" aria-hidden="true"></div>
           <div class="fc-node fc-decision">
             <span class="fc-tag">Decision</span>
             <p class="fc-label">Was the signal a quick pulse or a long hold?</p>
@@ -609,11 +575,11 @@
             <p class="fc-label">In the heart (Cx43): one cell fires → electric current jumps to its neighbours</p>
             <p class="fc-gloss">Electricity passes cell to cell instantly.</p>
           </div>
+          <div class="fc-tap">
+            <p class="fc-note">Cells can also 'talk' via electric fields alone (ephaptic coupling).</p>
+          </div>
           <div class="fc-arrow" aria-hidden="true"></div>
 
-          <p class="fc-note">Cells can also 'talk' via electric fields alone (ephaptic coupling).</p>
-
-          <div class="fc-arrow" aria-hidden="true"></div>
           <div class="fc-node fc-output">
             <span class="fc-tag">Output</span>
             <p class="fc-label">the whole heart contracts as <b>ONE</b> unit (fast along the fibres)</p>
@@ -625,11 +591,11 @@
             <p class="fc-label">Channels are rebuilt constantly (they last only 1 to 5 hours)</p>
             <p class="fc-gloss">Wiring is retuned on the fly.</p>
           </div>
+          <div class="fc-tap">
+            <p class="fc-note">Same wiring runs the gut, the womb in labour, brain synapses and early embryos.</p>
+          </div>
           <div class="fc-arrow" aria-hidden="true"></div>
 
-          <p class="fc-note">Same wiring runs the gut, the womb in labour, brain synapses and early embryos.</p>
-
-          <div class="fc-arrow" aria-hidden="true"></div>
           <div class="fc-node fc-decision">
             <span class="fc-tag">Decision</span>
             <p class="fc-label">Is this cell stressed or injured?</p>
